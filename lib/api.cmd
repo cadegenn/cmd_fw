@@ -1,14 +1,21 @@
 @echo off
-rem setlocal enableExtensions enableDelayedExpansion
+rem
+rem this script gather useful information from underlying Windows OS
+rem it can be considered as a general include file for windows scripts
+rem
+rem 2014.08.26, DCA
+rem /!\ DO NOT ENABLE THESE OPTIONS
+rem these options hav to be enabled in the caller script
+rem setlocal enabledelayedexpansion enableextensions
 rem VERSION of file is of the form YYYYmmdd.## where
 rem YYYY is the current year using 4 digits
 rem mm is the current month using 2 digits
 rem dd is the current day of month using 2 digits
 rem ## is the revision number within the same day (starting at 0)
 rem it HAVE TO be updated with each single modification
-set VERSION=20150505.00
+rem set VERSION=20160503.1650
 rem 
-rem Copyright (C) 2015  Charles-Antoine Degennes <cadegenn@gmail.com>
+rem Copyright (C) 2015-2016  Charles-Antoine Degennes <cadegenn@gmail.com>
 rem 
 rem This file is part of api.cmd
 rem 
@@ -27,187 +34,222 @@ rem     along with api.cmd.  If not, see <http://www.gnu.org/licenses/>.
 rem 
 rem HOW TO USE
 rem ==========
-rem
-rem in your scripts, use syntax like this
-rem call path\to\api.cmd :apifunction argument list with %VARIABLE%
-rem for example
-rem call %DIRNAME%\api.cmd :edebug MYVAR = %MYVAR%
-rem call %DIRNAME%\api.cmd :eexec "echo f | xcopy /hrky sourcefile.exe destfile.exe"
 rem 
-rem I recommend writing on top of your script following lines :
-rem @echo off
-rem setlocal enableExtensions enableDelayedExpansion
+rem call %DIRNAME%\windows.cmd
 rem
-rem and somewhere near the top of your script :
-rem rem compute DIRNAME variable
-rem for /f "tokens=*" %%i in ('echo %0') do set DIRNAME=%%~dpi
-rem if %DIRNAME:~-1%==\ set DIRNAME=%DIRNAME:~0,-1%
-rem for /f "tokens=*" %%i in ('echo %0') do set BASENAME=%%~nxi
-rem
-rem variable DIRNAME will then be the absolute pathname of your script. I recommand putting a copy
-rem of the api.cmd in this same directory to later be able to call %DIRNAME%\api.cmd :myfunc
-rem 
 rem Changelog
 rem =========
-rem 2016.03.15, DCA -   do not echo anything if QUIET has been requested
-rem 2015.04.10, DCA -	added serial() to generate a uniq serial number based on DATE-TIME
-rem 2015.04.02, DCA -	renamed eexec() to eexec()
-rem 2015.03.23, DCA -	add Question(), Question_YN() functions
-rem 2015.03.24, DCA -	add edevel() function to print data if DEVEL env variable is set
-rem 2014.03.20, DCA -	parse correctly arguments to get rid of function name in %*
-rem 
-rem ::::::::::::::::::::::::::::::::::::::::::::::
-rem 
-rem  @brief	common functions
-rem  @param	(string)	label
-rem  @return	(integer)	ERRORLEVEL
-rem  
-rem  e* functions shamelessly inspired from gentoo e* functions
-rem  you have to pass the correct label as parameter
-rem 
-rem ::::::::::::::::::::::::::::::::::::::::::::::
+rem 2016.05.03, DCA -   add MACADDRESS variable
+rem 2015.05.04, DCA -	use wmic to detect some BIOS data. enter set BIOS to see them all
+rem                     added WinPE compatibility (WinPE does not contain findstr)
+rem 2015.04.10, DCA -	use api.cmd to output everything
+rem 2015.03.11, DCA -	ajout de la détection du numéro de version de windows et export dans Windows_CurrentVersion
+rem						ajout de la détection du nom de windows et export dans WindowsName
+rem 2014.12.18, DCA -	ajout de la variable SED
+rem 2014.11.24, DCA -	ajout variable SOURCE_DIRNAME => chemin vers api.cmd et les outils détecté automatiquement
+rem 					de cette manière, possibilité d'installer en local les API avec install-api.cmd
+rem						escape d'éventuelles parenthèses dans le chemin de l'install.cmd appelant
+rem 2014.11.06, DCA -	ajout de la variable ZIP
+rem						ajout des variables HKLM_UNINSTALL(x86) et HKLM_UNINSTALL(x64). ce sont des raccourcis vers les clés Uninstall de la base de registre
+rem						ajout de la variable WindowsState qui remonte grossièrement dans quelle état d'installation se trouve Windows plus d'infos @url http://technet.microsoft.com/en-us/library/cc721913(v=ws.10).aspx
+rem 2013.06.28, AR -	détection du CommonDocuments
+rem 2012.04.18, AR -	détection du CommonAppData
+rem 2012.04.03, DCA -	détection du "manufacturer" et du "serialnumber". ça peut aider à différencier les VM des "vraies" machines
+rem						ces valeurs sont trouvées via wmic et portent un préfix BIOS_ (et ne marche pas sous XP => désactivés)
+rem 2011.05.26, DCA -	ajout détection du dossier "Démarrer/Programmes/Démarrage" pour pouvoir y insérer des scripts
+rem 2011.03.29, DCA -	fix détection HKLM_SOFTWARE(x64)
+rem 2011.01.19, DCA -	ajout des variables HKLM_SOFTWARE(x86) et HKLM_SOFTWARE(x64)
+rem 2010.12.07, DCA -	ajout de la variable ARCH = {x86,x64}
+rem 2010.11.23, DCA -	déplacé le test iconv après le calcul des progfiles
+rem 2010.11.22, DCA -	ajout variable ICONV et suppression du chemin en dur tout le long du script
+rem 2010.11.19, DCA -	ajout d'un variable UsersDir qui pointe vers le répertoire parent des profiles utilisateurs
+rem 2010.10.21, DCA -	ajout détection du "CommonPrograms" pour XP, VISTA, 7
+rem						ajout détection du "CommonDesktop" pour XP, VISTA, 7
+rem						ajout détection du "ProgFiles(x86)" pour XP, VISTA, 7
+rem						ajout détection du "ProgFiles(x64)" pour XP, VISTA, 7
+rem
 
-set LABEL=%1
-set ARGS=%*
-rem  using 'call' here is important @url http://ss64.com/nt/syntax-replace.html
-call set CMD=%%ARGS:%LABEL% =%%
-rem  define valid labels
-if "%LABEL%" == ":eexec" goto %LABEL%
-if "%LABEL%" == ":ebegin" goto %LABEL%
-if "%LABEL%" == ":einfo" goto %LABEL%
-if "%LABEL%" == ":ewarn" goto %LABEL%
-if "%LABEL%" == ":eerror" goto %LABEL%
-if "%LABEL%" == ":edebug" goto %LABEL%
-if "%LABEL%" == ":serial" goto %LABEL%
-goto :EOF
+rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+rem calcul de la variable SOURCE_DIRNAME
+rem
+set SOURCE_DIRNAME=%~dp0
+IF %SOURCE_DIRNAME:~-1%==\ set SOURCE_DIRNAME=%SOURCE_DIRNAME:~0,-1%
+set SOURCE_BASENAME=%~nx0
 
-rem eexec things and log accordingly of 2 debug levels :
-rem	DEBUG		simply log the command line to the console
-rem	DEVEL	log output to the console
-rem @param	full command line with arguments (enclose in double quote if you hav pipes)
-rem @return	ERRORLEVEL
-:eexec
-rem set ARGS=%*
-rem set CMD=%ARGS::eexec =%
-if defined DEBUG echo  * DBG: %CMD%
-if defined DEVEL %COMSPEC% /c %CMD%
-if NOT defined DEVEL %COMSPEC% /c %CMD% >nul 2>nul
-if %ERRORLEVEL% GTR 0 (
-    call :eerror %CMD%
-	exit /B %ERRORLEVEL%
+
+rem title %0
+call "%SOURCE_DIRNAME%\api.cmd" :ebegin #include %SOURCE_BASENAME% - BEGIN
+
+rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+rem Détection du réseau
+rem
+rem On détect le réseau sur lequel on se trouve actuellement pour ajuster l'installation
+for /f "tokens=2 delims= " %%i in ('arp.exe -a ^| find "Interface"') do (set IP=%%i)
+call "%SOURCE_DIRNAME%\api.cmd" :edebug IP = %IP%
+for /f "tokens=1,2 delims=." %%i in ('echo %IP%') do (set VLAN=%%i.%%j)
+call "%SOURCE_DIRNAME%\api.cmd" :edebug VLAN = %VLAN%
+for /F "tokens=1,2,3,4,5,6 delims=- " %%i in ('getmac /nh ^| find /V "Support"') do (set MACADDRESS=%%i:%%j:%%k:%%l:%%m:%%n)
+call "%SOURCE_DIRNAME%\api.cmd" :edebug MACADDRESS = %MACADDRESS%
+
+rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+rem détection de l'architecture de l'OS
+rem
+set ARCH=x86
+if "%PROCESSOR_ARCHITECTURE%" == "AMD64" set ARCH=x64
+call "%SOURCE_DIRNAME%\api.cmd" :edebug ARCH = %ARCH%
+
+rem détection du ProgramFiles 32bits
+rem arch x86 : ProgFiles(x86) = c:\Program Files
+rem arch x64 : ProgFiles(x86) = C:\Program Files(x86)
+set ProgFiles(x86)=%ProgramFiles%
+if exist "%ProgramFiles(x86)%" set ProgFiles(x86)=%ProgramFiles(x86)%
+call "%SOURCE_DIRNAME%\api.cmd" :edebug ProgFiles(x86) = %ProgFiles(x86)%
+rem détection du ProgramFiles 64bits
+rem arch x86 : ProgFiles(x64) = c:\Program Files
+rem arch x64 : ProgFiles(x64) = C:\Program Files
+set ProgFiles(x64)=%ProgramFiles%
+rem if exist "%ProgramFiles(x86)%" set ProgFiles_x64=%ProgramFiles(x86)%
+call "%SOURCE_DIRNAME%\api.cmd" :edebug ProgFiles(x64) = %ProgFiles(x64)%
+
+rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+rem Détection des clés de registre
+rem
+rem détection des HKLM_SOFTWARE
+set HKLM_SOFTWARE(x86)=HKLM\Software
+if "%ARCH%" == "x64" set HKLM_SOFTWARE(x86)=%HKLM_SOFTWARE(x86)%\Wow6432Node
+call "%SOURCE_DIRNAME%\api.cmd" :edebug HKLM_SOFTWARE(x86) = %HKLM_SOFTWARE(x86)%
+set HKLM_SOFTWARE(x64)=HKLM\Software
+call "%SOURCE_DIRNAME%\api.cmd" :edebug HKLM_SOFTWARE(x64) = %HKLM_SOFTWARE(x64)%
+
+rem déclaration des HKLM_UNINSTALL
+set HKLM_UNINSTALL(x86)=%HKLM_SOFTWARE(x86)%\Microsoft\Windows\CurrentVersion\Uninstall
+call "%SOURCE_DIRNAME%\api.cmd" :edebug HKLM_UNINSTALL(x86) = %HKLM_UNINSTALL(x86)%
+set HKLM_UNINSTALL(x64)=%HKLM_SOFTWARE(x64)%\Microsoft\Windows\CurrentVersion\Uninstall
+call "%SOURCE_DIRNAME%\api.cmd" :edebug HKLM_UNINSTALL(x64) = %HKLM_UNINSTALL(x64)%
+
+REM rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+REM rem Déclaration de binaires
+REM rem
+REM rem 7-zip au cas ou
+REM set ZIP="%SOURCE_DIRNAME%\7-Zip\%ARCH%\7z.exe"
+REM call "%SOURCE_DIRNAME%\api.cmd" :edebug ZIP = %ZIP%
+
+REM rem SED
+REM set SED=%SOURCE_DIRNAME%\GnuWin32\bin\sed.exe
+REM call "%SOURCE_DIRNAME%\api.cmd" :edebug SED = %SED%
+
+REM rem pour la suite, on a besoin de iconv
+REM rem set ICONV="%SOFTWARE%\_Utils\GnuWin32\bin\iconv.exe"
+REM set ICONV="%SOURCE_DIRNAME%\GnuWin32\bin\iconv.exe"
+REM call "%SOURCE_DIRNAME%\api.cmd" :edebug ICONV = %ICONV%
+REM if NOT exist %ICONV% (
+	REM echo %0 - %ICONV% n'existe pas.
+	REM goto _end
+REM )
+
+REM rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+REM rem Détection des chemins systèmes
+REM rem
+REM rem détection du menu "Tous les programmes" (CommonPrograms)
+REM rem
+REM for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Programs" ^| %ICONV% -t CP850') do set CommonPrograms=%%b
+REM call "%SOURCE_DIRNAME%\api.cmd" :edebug CommonPrograms = %CommonPrograms%
+
+REM rem détection du Bureau de AllUsers (CommonDesktop)
+REM for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Desktop" ^| %ICONV% -t CP850') do set CommonDesktop=%%b
+REM call "%SOURCE_DIRNAME%\api.cmd" :edebug CommonDesktop = %CommonDesktop%
+
+REM rem détection du "Démarrage" de AllUsers (CommonStartup)
+REM for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Startup" ^| %ICONV% -t CP850') do set CommonStartup=%%b
+REM call "%SOURCE_DIRNAME%\api.cmd" :edebug CommonStartup = %CommonStartup%
+
+REM rem detection du chemin CommonAppData
+REM for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common AppData" ^| %ICONV% -t CP850') do set CommonAppData=%%b
+REM call "%SOURCE_DIRNAME%\api.cmd" :edebug CommonAppData = %CommonAppData%
+
+REM rem detection du chemin CommonDocuments
+REM for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Documents" ^| %ICONV% -t CP850') do set CommonDocuments=%%b
+REM call "%SOURCE_DIRNAME%\api.cmd" :edebug CommonDocuments = %CommonDocuments%
+
+rem détection de la phase d'installation de windows
+for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Setup\State" ^| find "REG_SZ"') do set Windows_%%i=%%k
+rem call "%SOURCE_DIRNAME%\api.cmd" :edebug Windows_ImageState = %Windows_ImageState%
+
+REM rem détection du répertoire parent des profiles utilisateurs UsersDir
+REM set UsersDir=%SystemDrive%\Documents and settings
+REM if exist "%SystemDrive%\Users" set UsersDir=%SystemDrive%\Users
+REM call "%SOURCE_DIRNAME%\api.cmd" :edebug UsersDir = %UsersDir%
+
+rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+rem Détection de la version de Windows
+rem
+for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion" ^| find "REG_SZ"') do set Windows_%%i=%%k
+for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion" ^| find "REG_DWORD"') do set /a Windows_%%i=%%k
+if "%Windows_InstallationType%" == "Server" goto :getWindowsServerOsVer
+if "%Windows_InstallationType%" == "Client" goto :getWindowsClientOsVer
+if "%Windows_InstallationType%" == "WindowsPE" goto :getWindowsPEOsVer
+:getWindowsServerOsVer
+if "%Windows_CurrentVersion%"=="5.2" set Windows_OsVer=2003
+if "%Windows_CurrentVersion%"=="6.0" set Windows_OsVer=2008
+if "%Windows_CurrentVersion%"=="6.1" set Windows_OsVer=2008r2
+if "%Windows_CurrentVersion%"=="6.2" set Windows_OsVer=2012
+if "%Windows_CurrentVersion%"=="6.3" set Windows_OsVer=2012r2
+goto :continue
+
+:getWindowsClientOsVer
+if "%Windows_CurrentVersion%"=="5.1" set Windows_OsVer=xp
+if "%Windows_CurrentVersion%"=="5.2" set Windows_OsVer=2003
+if "%Windows_CurrentVersion%"=="6.0" set Windows_OsVer=vista
+if "%Windows_CurrentVersion%"=="6.1" set Windows_OsVer=7
+if "%Windows_CurrentVersion%"=="6.2" set Windows_OsVer=8
+if "%Windows_CurrentVersion%"=="6.3" set Windows_OsVer=8.1
+goto :continue
+
+:getWindowsPEOsVer
+if "%Windows_CurrentVersion%"=="5.1" set Windows_OsVer=2
+if "%Windows_CurrentVersion%"=="5.2" set Windows_OsVer=2
+if "%Windows_CurrentVersion%"=="6.0" set Windows_OsVer=3
+if "%Windows_CurrentVersion%"=="6.1" set Windows_OsVer=4
+if "%Windows_CurrentVersion%"=="6.2" set Windows_OsVer=5
+if "%Windows_CurrentVersion%"=="6.3" set Windows_OsVer=5.1
+goto :continue
+
+:continue
+rem windows 10 have another versionning system : CurrentVersion is still 6.3, but 2 new registry values appears : CurrentMajorVersionNumber and CurrentMinorVersionNumber. Let's use it
+if DEFINED Windows_CurrentMajorVersionNumber (
+    if DEFINED Windows_CurrentMinorVersionNumber (
+        set Windows_OsVer=%Windows_CurrentMajorVersionNumber%.%Windows_CurrentMinorVersionNumber%
+    ) else (
+        set Windows_OsVer=%Windows_CurrentMajorVersionNumber%
+    )
 )
-goto :EOF
+set Windows_ShortProductName=%Windows_ProductName%
+set Windows_ShortProductName=%Windows_ShortProductName: =%
+set Windows_ShortProductName=%Windows_ShortProductName:.=%
+if "%Windows_InstallationType%" == "WindowsPE" (
+    set Windows_ShortProductName=WinPE%Windows_OsVer%
+    for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\WinPE" /v Version') do set WinPE_Version=%%k
+)
+for /f "tokens=1,2* delims==" %%i in ('set Win') do call "%SOURCE_DIRNAME%\api.cmd" :edebug %%i = %%j
 
-rem print a message on the console
-rem @param	(string)	message without quotes
-rem @TODO	try with this syntax : <nul: set /p %CMD%
-:ebegin
-rem set ARGS=%*
-rem set CMD=%ARGS::ebegin =%
-if NOT DEFINED QUIET echo  * %CMD%
-goto :EOF
-
-rem print an information message on the console
-rem @param	(string)	message without quotes
-:einfo
-rem set ARGS=%*
-rem set CMD=%ARGS::einfo =%
-if NOT DEFINED QUIET echo  * INF: %CMD%
-goto :EOF
-
-rem print a warning on the console
-rem @param	(string)	message without quotes
-:ewarn
-rem set ARGS=%*
-rem set CMD=%ARGS::ewarn =%
-if NOT DEFINED QUIET echo  * WRN: %CMD%
-goto :EOF
-
-rem print an error on the console
-rem @param	(string)	message without quotes
-:eerror
-rem set ARGS=%*
-rem set CMD=%ARGS::eerror =%
-if NOT DEFINED QUIET echo  * ERR: %CMD%
-goto :EOF
-
-rem print a debug on the console (only if DEBUG is set)
-rem @param	(string)	message without quotes
-:edebug
-rem set ARGS=%*
-rem set CMD=%ARGS::edebug =%
-if defined DEBUG echo  * DBG: %CMD%
-goto :EOF
-
-rem print a debug on the console (only if DEBUG is set)
-rem @param	(string)	message without quotes
-:edevel
-rem set ARGS=%*
-rem set CMD=%ARGS::edebug =%
-if defined DEVEL echo  * DEV: %CMD%
-goto :EOF
-
+rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+rem Détection de la version de Computer
 rem
-rem @brief        Question()      ask a question and wait for a response
-rem @param        (string)        question to ask
-rem @param        (string)        default response
-rem @return       (string)        anwser of the user
-:Question
-    set FUNCNAME=%1
-    call %DIRNAME%\api.cmd :edevel %FUNCNAME%(^)
-    if %2 == -h (
-        call %DIRNAME%\%0 :ewarn usage: %FUNCNAME% 'question' [default_answer]
-        goto :EOF
-    )
-    set QUESTION=%2
-    set QUESTION=%QUESTION:"=%
-    set DEFAULT_ANSWER=%3
-    rem call :ebegin %QUESTION% ^[%DEFAULT_ANSWER%^] ? 
-    rem set /p ANSWER=
-    set /p ANSWER= * %QUESTION% ? [%DEFAULT_ANSWER%] 
-    if NOT DEFINED ANSWER set ANSWER=%DEFAULT_ANSWER%
-    rem call %DIRNAME%\api.cmd :edebug ANSWER = %ANSWER%
-goto :EOF
+for /f "tokens=1*" %%v in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Group Policy\State\Machine" /v "Distinguished-Name" ^| findstr REG_SZ') do set ComputerDN=%%w
+rem détection de l'OU
+set ComputerOU=%ComputerDN:*,OU=OU%
+for /f "tokens=1,2* delims==" %%i in ('set Computer') do call "%SOURCE_DIRNAME%\api.cmd" :edebug %%i = %%j
 
+
+rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+rem Detect some WMI data
+rem found some simple solution here @url http://www.robvanderwoude.com/wmic.php (thank you guy !!)
 rem
-rem @brief        Question_YN()   ask a YES/No question and wait for a response
-rem @param        (string)        question to ask
-rem @param        (string)        default response
-rem @return       (string)        'y' if user agree | nothing if user do not agree
-:Question_YN
-    set FUNCNAME=%1
-    call %DIRNAME%\api.cmd :edevel %FUNCNAME%(^)
-    if %2 == -h (
-        call %0 :ewarn usage: %FUNCNAME% 'question' [y^|n]
-        goto :EOF
-    )
-    set QUESTION=%2
-    set QUESTION=%QUESTION:"=%
-    set DEFAULT_ANSWER=%3
-    call %0 :Question %QUESTION% %DEFAULT_ANSWER%
-    set SHORT_REPONSE=%ANSWER:~0,1%
-    rem clear ANSWER variable
-    set ANSWER=
-    rem ... and fill it only if response is valid and is 'y'
-    if %SHORT_REPONSE% == y set ANSWER=%SHORT_REPONSE%
-    rem call %DIRNAME%\api.cmd :edebug ANSWER = %ANSWER%
-goto :EOF
+for /f "tokens=*" %%i in ('wmic bios get manufacturer^,serialnumber /value ^| find "="') do set BIOS_%%i
+for /f "tokens=*" %%i in ('wmic computersystem get model /value ^| find "="') do set BIOS_%%i
+for /f "tokens=1,2* delims==" %%i in ('set BIOS') do call "%SOURCE_DIRNAME%\api.cmd" :edebug %%i = %%j
 
-rem
-rem @brief	serial()	export a serial number based on current date-time
-rem @return	(string)	SERIAL variable
-:serial
-    for /f "tokens=3 delims=/ " %%i in ('date /t') do set YEAR=%%i
-    for /f "tokens=2 delims=/" %%i in ('date /t') do set MONTH=%%i
-    for /f "tokens=1 delims=/" %%i in ('date /t') do set DAY=%%i
-rem    for /f "tokens=1 delims=:" %%i in ('time /t') do set HOUR=%%i
-rem    for /f "tokens=2 delims=: " %%i in ('time /t') do set MINUTE=%%i
-    for /f "tokens=1 delims=: " %%i in ('echo %TIME%') do set HOUR=%%i
-    if %HOUR% LSS 10 set HOUR=0%HOUR%
-    for /f "tokens=2 delims=: " %%i in ('echo %TIME%') do set MINUTE=%%i
-    for /f "tokens=3 delims=: " %%i in ('echo %TIME%') do set SECONDS=%%i
-    for /f "tokens=2 delims=, " %%i in ('echo %TIME%') do set MILLI=%%i
-    set SERIAL=%YEAR%%MONTH%%DAY%-%HOUR%%MINUTE%%SECONDS%.%MILLI%
-	call %0 :edebug SERIAL = %SERIAL%
-goto :EOF
+rem :_end
+call %SOURCE_DIRNAME%\api.cmd :ebegin #include %SOURCE_BASENAME% - END
 
+goto :EOF
