@@ -1,33 +1,26 @@
 @echo off
 setlocal enableExtensions enableDelayedExpansion
-rem
-rem skeleton of script to use with api.cmd
-rem
 
-rem VERSION of file is of the form YYYYmmdd.## where
-rem YYYY is the current year using 4 digits
-rem mm is the current month using 2 digits
-rem dd is the current day of month using 2 digits
-rem ## is the revision number within the same day (starting at 0)
-rem it HAVE TO be updated with each single modification
-set VERSION=20150401.00
+rem
+rem @file skel.cmd
+rem @brief skeleton of script to use with efunctions.cmd
+rem @author Charles-Antoine Degennes <cadegenn]gmail.com>
+rem @copyright  Copyright (C) 2015-2016  Charles-Antoine Degennes <cadegenn@gmail.com>
+rem
+rem This file is part of TinyCmdFramework
 rem 
-rem Copyright (C) 2015-2016 Charles-Antoine Degennes <cadegenn@gmail.com>
-rem 
-rem This file is part of api.cmd
-rem 
-rem     api.cmd is free software: you can redistribute it and/or modify
+rem     TinyCmdFramework is free software: you can redistribute it and/or modify
 rem     it under the terms of the GNU General Public License as published by
 rem     the Free Software Foundation, either version 3 of the License, or
 rem     (at your option) any later version.
 rem 
-rem     api.cmd is distributed in the hope that it will be useful,
+rem     TinyCmdFramework is distributed in the hope that it will be useful,
 rem     but WITHOUT ANY WARRANTY; without even the implied warranty of
 rem     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 rem     GNU General Public License for more details.
 rem 
 rem     You should have received a copy of the GNU General Public License
-rem     along with api.cmd.  If not, see <http://www.gnu.org/licenses/>.
+rem     along with TinyCmdFramework.  If not, see <http://www.gnu.org/licenses/>.
 rem 
 rem
 rem Changelog
@@ -93,7 +86,7 @@ echo    -y          assume 'yes' to all questions
 goto :EOF
 
 :arg_unknown
-call "%DIRNAME%\lib\api.cmd" :eerror Unknown argument : %1
+call "%DIRNAME%\lib\efunctions.cmd" :eerror Unknown argument : %1
 goto arg_help
 
 :arg_end
@@ -107,7 +100,7 @@ rem
 rem ::::::::::::::::::::::::::::::::::::::::::::::::
 
 rem load windows variables
-call %DIRNAME%\lib\windows.cmd
+call "%DIRNAME%\lib\api.cmd"
 
 rem ::::::::::::::::::::::::::::::::::::::::::::::::
 rem
