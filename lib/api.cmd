@@ -17,20 +17,20 @@ rem set VERSION=20160503.1650
 rem 
 rem Copyright (C) 2015-2016  Charles-Antoine Degennes <cadegenn@gmail.com>
 rem 
-rem This file is part of api.cmd
+rem This file is part of cmd_fw
 rem 
-rem     api.cmd is free software: you can redistribute it and/or modify
+rem     cmd_fw is free software: you can redistribute it and/or modify
 rem     it under the terms of the GNU General Public License as published by
 rem     the Free Software Foundation, either version 3 of the License, or
 rem     (at your option) any later version.
 rem 
-rem     api.cmd is distributed in the hope that it will be useful,
+rem     cmd_fw is distributed in the hope that it will be useful,
 rem     but WITHOUT ANY WARRANTY; without even the implied warranty of
 rem     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 rem     GNU General Public License for more details.
 rem 
 rem     You should have received a copy of the GNU General Public License
-rem     along with api.cmd.  If not, see <http://www.gnu.org/licenses/>.
+rem     along with cmd_fw.  If not, see <http://www.gnu.org/licenses/>.
 rem 
 rem HOW TO USE
 rem ==========
@@ -42,12 +42,12 @@ rem =========
 rem 2016.05.03, DCA -   add MACADDRESS variable
 rem 2015.05.04, DCA -	use wmic to detect some BIOS data. enter set BIOS to see them all
 rem                     added WinPE compatibility (WinPE does not contain findstr)
-rem 2015.04.10, DCA -	use api.cmd to output everything
+rem 2015.04.10, DCA -	use efunctions.cmd to output everything
 rem 2015.03.11, DCA -	ajout de la détection du numéro de version de windows et export dans Windows_CurrentVersion
 rem						ajout de la détection du nom de windows et export dans WindowsName
 rem 2014.12.18, DCA -	ajout de la variable SED
-rem 2014.11.24, DCA -	ajout variable SOURCE_DIRNAME => chemin vers api.cmd et les outils détecté automatiquement
-rem 					de cette manière, possibilité d'installer en local les API avec install-api.cmd
+rem 2014.11.24, DCA -	ajout variable SOURCE_DIRNAME => chemin vers efunctions.cmd et les outils détecté automatiquement
+rem 					de cette manière, possibilité d'installer en local les API avec install-efunctions.cmd
 rem						escape d'éventuelles parenthèses dans le chemin de l'install.cmd appelant
 rem 2014.11.06, DCA -	ajout de la variable ZIP
 rem						ajout des variables HKLM_UNINSTALL(x86) et HKLM_UNINSTALL(x64). ce sont des raccourcis vers les clés Uninstall de la base de registre
@@ -76,40 +76,39 @@ set SOURCE_DIRNAME=%~dp0
 IF %SOURCE_DIRNAME:~-1%==\ set SOURCE_DIRNAME=%SOURCE_DIRNAME:~0,-1%
 set SOURCE_BASENAME=%~nx0
 
-
 rem title %0
-call "%SOURCE_DIRNAME%\api.cmd" :ebegin #include %SOURCE_BASENAME% - BEGIN
+call "%SOURCE_DIRNAME%\efunctions.cmd" :ebegin #include %SOURCE_BASENAME% - BEGIN
 
 rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 rem Détection du réseau
 rem
 rem On détect le réseau sur lequel on se trouve actuellement pour ajuster l'installation
 for /f "tokens=2 delims= " %%i in ('arp.exe -a ^| find "Interface"') do (set IP=%%i)
-call "%SOURCE_DIRNAME%\api.cmd" :edebug IP = %IP%
+call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug IP = %IP%
 for /f "tokens=1,2 delims=." %%i in ('echo %IP%') do (set VLAN=%%i.%%j)
-call "%SOURCE_DIRNAME%\api.cmd" :edebug VLAN = %VLAN%
+call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug VLAN = %VLAN%
 for /F "tokens=1,2,3,4,5,6 delims=- " %%i in ('getmac /nh ^| find /V "Support"') do (set MACADDRESS=%%i:%%j:%%k:%%l:%%m:%%n)
-call "%SOURCE_DIRNAME%\api.cmd" :edebug MACADDRESS = %MACADDRESS%
+call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug MACADDRESS = %MACADDRESS%
 
 rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 rem détection de l'architecture de l'OS
 rem
 set ARCH=x86
 if "%PROCESSOR_ARCHITECTURE%" == "AMD64" set ARCH=x64
-call "%SOURCE_DIRNAME%\api.cmd" :edebug ARCH = %ARCH%
+call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug ARCH = %ARCH%
 
 rem détection du ProgramFiles 32bits
 rem arch x86 : ProgFiles(x86) = c:\Program Files
 rem arch x64 : ProgFiles(x86) = C:\Program Files(x86)
 set ProgFiles(x86)=%ProgramFiles%
 if exist "%ProgramFiles(x86)%" set ProgFiles(x86)=%ProgramFiles(x86)%
-call "%SOURCE_DIRNAME%\api.cmd" :edebug ProgFiles(x86) = %ProgFiles(x86)%
+call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug ProgFiles(x86) = %ProgFiles(x86)%
 rem détection du ProgramFiles 64bits
 rem arch x86 : ProgFiles(x64) = c:\Program Files
 rem arch x64 : ProgFiles(x64) = C:\Program Files
 set ProgFiles(x64)=%ProgramFiles%
 rem if exist "%ProgramFiles(x86)%" set ProgFiles_x64=%ProgramFiles(x86)%
-call "%SOURCE_DIRNAME%\api.cmd" :edebug ProgFiles(x64) = %ProgFiles(x64)%
+call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug ProgFiles(x64) = %ProgFiles(x64)%
 
 rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 rem Détection des clés de registre
@@ -117,31 +116,31 @@ rem
 rem détection des HKLM_SOFTWARE
 set HKLM_SOFTWARE(x86)=HKLM\Software
 if "%ARCH%" == "x64" set HKLM_SOFTWARE(x86)=%HKLM_SOFTWARE(x86)%\Wow6432Node
-call "%SOURCE_DIRNAME%\api.cmd" :edebug HKLM_SOFTWARE(x86) = %HKLM_SOFTWARE(x86)%
+call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug HKLM_SOFTWARE(x86) = %HKLM_SOFTWARE(x86)%
 set HKLM_SOFTWARE(x64)=HKLM\Software
-call "%SOURCE_DIRNAME%\api.cmd" :edebug HKLM_SOFTWARE(x64) = %HKLM_SOFTWARE(x64)%
+call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug HKLM_SOFTWARE(x64) = %HKLM_SOFTWARE(x64)%
 
 rem déclaration des HKLM_UNINSTALL
 set HKLM_UNINSTALL(x86)=%HKLM_SOFTWARE(x86)%\Microsoft\Windows\CurrentVersion\Uninstall
-call "%SOURCE_DIRNAME%\api.cmd" :edebug HKLM_UNINSTALL(x86) = %HKLM_UNINSTALL(x86)%
+call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug HKLM_UNINSTALL(x86) = %HKLM_UNINSTALL(x86)%
 set HKLM_UNINSTALL(x64)=%HKLM_SOFTWARE(x64)%\Microsoft\Windows\CurrentVersion\Uninstall
-call "%SOURCE_DIRNAME%\api.cmd" :edebug HKLM_UNINSTALL(x64) = %HKLM_UNINSTALL(x64)%
+call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug HKLM_UNINSTALL(x64) = %HKLM_UNINSTALL(x64)%
 
 REM rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 REM rem Déclaration de binaires
 REM rem
 REM rem 7-zip au cas ou
 REM set ZIP="%SOURCE_DIRNAME%\7-Zip\%ARCH%\7z.exe"
-REM call "%SOURCE_DIRNAME%\api.cmd" :edebug ZIP = %ZIP%
+REM call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug ZIP = %ZIP%
 
 REM rem SED
 REM set SED=%SOURCE_DIRNAME%\GnuWin32\bin\sed.exe
-REM call "%SOURCE_DIRNAME%\api.cmd" :edebug SED = %SED%
+REM call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug SED = %SED%
 
 REM rem pour la suite, on a besoin de iconv
 REM rem set ICONV="%SOFTWARE%\_Utils\GnuWin32\bin\iconv.exe"
 REM set ICONV="%SOURCE_DIRNAME%\GnuWin32\bin\iconv.exe"
-REM call "%SOURCE_DIRNAME%\api.cmd" :edebug ICONV = %ICONV%
+REM call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug ICONV = %ICONV%
 REM if NOT exist %ICONV% (
 	REM echo %0 - %ICONV% n'existe pas.
 	REM goto _end
@@ -153,32 +152,32 @@ REM rem
 REM rem détection du menu "Tous les programmes" (CommonPrograms)
 REM rem
 REM for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Programs" ^| %ICONV% -t CP850') do set CommonPrograms=%%b
-REM call "%SOURCE_DIRNAME%\api.cmd" :edebug CommonPrograms = %CommonPrograms%
+REM call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug CommonPrograms = %CommonPrograms%
 
 REM rem détection du Bureau de AllUsers (CommonDesktop)
 REM for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Desktop" ^| %ICONV% -t CP850') do set CommonDesktop=%%b
-REM call "%SOURCE_DIRNAME%\api.cmd" :edebug CommonDesktop = %CommonDesktop%
+REM call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug CommonDesktop = %CommonDesktop%
 
 REM rem détection du "Démarrage" de AllUsers (CommonStartup)
 REM for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Startup" ^| %ICONV% -t CP850') do set CommonStartup=%%b
-REM call "%SOURCE_DIRNAME%\api.cmd" :edebug CommonStartup = %CommonStartup%
+REM call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug CommonStartup = %CommonStartup%
 
 REM rem detection du chemin CommonAppData
 REM for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common AppData" ^| %ICONV% -t CP850') do set CommonAppData=%%b
-REM call "%SOURCE_DIRNAME%\api.cmd" :edebug CommonAppData = %CommonAppData%
+REM call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug CommonAppData = %CommonAppData%
 
 REM rem detection du chemin CommonDocuments
 REM for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Documents" ^| %ICONV% -t CP850') do set CommonDocuments=%%b
-REM call "%SOURCE_DIRNAME%\api.cmd" :edebug CommonDocuments = %CommonDocuments%
+REM call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug CommonDocuments = %CommonDocuments%
 
 rem détection de la phase d'installation de windows
 for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Setup\State" ^| find "REG_SZ"') do set Windows_%%i=%%k
-rem call "%SOURCE_DIRNAME%\api.cmd" :edebug Windows_ImageState = %Windows_ImageState%
+rem call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug Windows_ImageState = %Windows_ImageState%
 
 REM rem détection du répertoire parent des profiles utilisateurs UsersDir
 REM set UsersDir=%SystemDrive%\Documents and settings
 REM if exist "%SystemDrive%\Users" set UsersDir=%SystemDrive%\Users
-REM call "%SOURCE_DIRNAME%\api.cmd" :edebug UsersDir = %UsersDir%
+REM call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug UsersDir = %UsersDir%
 
 rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 rem Détection de la version de Windows
@@ -230,7 +229,7 @@ if "%Windows_InstallationType%" == "WindowsPE" (
     set Windows_ShortProductName=WinPE%Windows_OsVer%
     for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\WinPE" /v Version') do set WinPE_Version=%%k
 )
-for /f "tokens=1,2* delims==" %%i in ('set Win') do call "%SOURCE_DIRNAME%\api.cmd" :edebug %%i = %%j
+for /f "tokens=1,2* delims==" %%i in ('set Win') do call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug %%i = %%j
 
 rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 rem Détection de la version de Computer
@@ -238,7 +237,7 @@ rem
 for /f "tokens=1*" %%v in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Group Policy\State\Machine" /v "Distinguished-Name" ^| findstr REG_SZ') do set ComputerDN=%%w
 rem détection de l'OU
 set ComputerOU=%ComputerDN:*,OU=OU%
-for /f "tokens=1,2* delims==" %%i in ('set Computer') do call "%SOURCE_DIRNAME%\api.cmd" :edebug %%i = %%j
+for /f "tokens=1,2* delims==" %%i in ('set Computer') do call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug %%i = %%j
 
 
 rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -247,9 +246,9 @@ rem found some simple solution here @url http://www.robvanderwoude.com/wmic.php 
 rem
 for /f "tokens=*" %%i in ('wmic bios get manufacturer^,serialnumber /value ^| find "="') do set BIOS_%%i
 for /f "tokens=*" %%i in ('wmic computersystem get model /value ^| find "="') do set BIOS_%%i
-for /f "tokens=1,2* delims==" %%i in ('set BIOS') do call "%SOURCE_DIRNAME%\api.cmd" :edebug %%i = %%j
+for /f "tokens=1,2* delims==" %%i in ('set BIOS') do call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug %%i = %%j
 
 rem :_end
-call %SOURCE_DIRNAME%\api.cmd :ebegin #include %SOURCE_BASENAME% - END
+call "%SOURCE_DIRNAME%\efunctions.cmd" :ebegin #include %SOURCE_BASENAME% - END
 
 goto :EOF
