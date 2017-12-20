@@ -151,24 +151,24 @@ REM rem Détection des chemins systèmes
 REM rem
 REM rem détection du menu "Tous les programmes" (CommonPrograms)
 REM rem
-REM for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Programs" ^| %ICONV% -t CP850') do set CommonPrograms=%%b
+REM for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Programs" ^| %ICONV% -t CP850') do set CommonPrograms=%%j
 REM call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug CommonPrograms = %CommonPrograms%
 
 REM rem détection du Bureau de AllUsers (CommonDesktop)
-REM for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Desktop" ^| %ICONV% -t CP850') do set CommonDesktop=%%b
-REM call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug CommonDesktop = %CommonDesktop%
+for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Desktop" ^| %ICONV% -t CP850') do set CommonDesktop=%%j
+call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug CommonDesktop = %CommonDesktop%
 
 REM rem détection du "Démarrage" de AllUsers (CommonStartup)
-REM for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Startup" ^| %ICONV% -t CP850') do set CommonStartup=%%b
-REM call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug CommonStartup = %CommonStartup%
+for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Startup" ^| %ICONV% -t CP850') do set CommonStartup=%%j
+call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug CommonStartup = %CommonStartup%
 
 REM rem detection du chemin CommonAppData
-REM for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common AppData" ^| %ICONV% -t CP850') do set CommonAppData=%%b
-REM call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug CommonAppData = %CommonAppData%
+for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common AppData" ^| %ICONV% -t CP850') do set CommonAppData=%%j
+call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug CommonAppData = %CommonAppData%
 
 REM rem detection du chemin CommonDocuments
-REM for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Documents" ^| %ICONV% -t CP850') do set CommonDocuments=%%b
-REM call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug CommonDocuments = %CommonDocuments%
+for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Documents" ^| %ICONV% -t CP850') do set CommonDocuments=%%j
+call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug CommonDocuments = %CommonDocuments%
 
 rem détection de la phase d'installation de windows
 for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Setup\State" ^| find "REG_SZ"') do set Windows_%%i=%%k
