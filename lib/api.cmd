@@ -151,23 +151,23 @@ REM rem Détection des chemins systèmes
 REM rem
 REM rem détection du menu "Tous les programmes" (CommonPrograms)
 REM rem
-REM for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Programs" ^| %ICONV% -t CP850') do set CommonPrograms=%%j
+REM for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Programs"') do set CommonPrograms=%%j
 REM call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug CommonPrograms = %CommonPrograms%
 
 REM rem détection du Bureau de AllUsers (CommonDesktop)
-for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Desktop" ^| %ICONV% -t CP850') do set CommonDesktop=%%j
+for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Desktop"') do set CommonDesktop=%%j
 call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug CommonDesktop = %CommonDesktop%
 
 REM rem détection du "Démarrage" de AllUsers (CommonStartup)
-for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Startup" ^| %ICONV% -t CP850') do set CommonStartup=%%j
+for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Startup"') do set CommonStartup=%%j
 call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug CommonStartup = %CommonStartup%
 
 REM rem detection du chemin CommonAppData
-for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common AppData" ^| %ICONV% -t CP850') do set CommonAppData=%%j
+for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common AppData"') do set CommonAppData=%%j
 call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug CommonAppData = %CommonAppData%
 
 REM rem detection du chemin CommonDocuments
-for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Documents" ^| %ICONV% -t CP850') do set CommonDocuments=%%j
+for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Documents"') do set CommonDocuments=%%j
 call "%SOURCE_DIRNAME%\efunctions.cmd" :edebug CommonDocuments = %CommonDocuments%
 
 rem détection de la phase d'installation de windows
@@ -188,6 +188,7 @@ if "%Windows_InstallationType%" == "Server" goto :getWindowsServerOsVer
 if "%Windows_InstallationType%" == "Client" goto :getWindowsClientOsVer
 if "%Windows_InstallationType%" == "WindowsPE" goto :getWindowsPEOsVer
 :getWindowsServerOsVer
+if "%Windows_CurrentVersion%"=="5.0" set Windows_OsVer=2000
 if "%Windows_CurrentVersion%"=="5.2" set Windows_OsVer=2003
 if "%Windows_CurrentVersion%"=="6.0" set Windows_OsVer=2008
 if "%Windows_CurrentVersion%"=="6.1" set Windows_OsVer=2008r2
@@ -196,9 +197,10 @@ if "%Windows_CurrentVersion%"=="6.3" set Windows_OsVer=2012r2
 goto :continue
 
 :getWindowsClientOsVer
-if "%Windows_CurrentVersion%"=="5.1" set Windows_OsVer=xp
-if "%Windows_CurrentVersion%"=="5.2" set Windows_OsVer=2003
-if "%Windows_CurrentVersion%"=="6.0" set Windows_OsVer=vista
+if "%Windows_CurrentVersion%"=="5.0" set Windows_OsVer=2000
+if "%Windows_CurrentVersion%"=="5.1" set Windows_OsVer=XP
+if "%Windows_CurrentVersion%"=="5.2" set Windows_OsVer=XP64
+if "%Windows_CurrentVersion%"=="6.0" set Windows_OsVer=Vista
 if "%Windows_CurrentVersion%"=="6.1" set Windows_OsVer=7
 if "%Windows_CurrentVersion%"=="6.2" set Windows_OsVer=8
 if "%Windows_CurrentVersion%"=="6.3" set Windows_OsVer=8.1
@@ -216,9 +218,10 @@ goto :continue
 :continue
 rem windows 10 have another versionning system : CurrentVersion is still 6.3, but 2 new registry values appears : CurrentMajorVersionNumber and CurrentMinorVersionNumber. Let's use it
 if DEFINED Windows_CurrentMajorVersionNumber (
-    if DEFINED Windows_CurrentMinorVersionNumber (
-        set Windows_OsVer=%Windows_CurrentMajorVersionNumber%.%Windows_CurrentMinorVersionNumber%
-    ) else (
+rem Nobody use Windows_CurrentMinorVersionNumber, even Microsoft
+rem    if DEFINED Windows_CurrentMinorVersionNumber (
+rem        set Windows_OsVer=%Windows_CurrentMajorVersionNumber%.%Windows_CurrentMinorVersionNumber%
+rem    ) else (
         set Windows_OsVer=%Windows_CurrentMajorVersionNumber%
     )
 )
