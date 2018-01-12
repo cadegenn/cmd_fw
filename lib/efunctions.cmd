@@ -79,6 +79,7 @@ if "%LABEL%" == ":einfo" goto %LABEL%
 if "%LABEL%" == ":ewarn" goto %LABEL%
 if "%LABEL%" == ":eerror" goto %LABEL%
 if "%LABEL%" == ":edebug" goto %LABEL%
+if "%LABEL%" == ":edevel" goto %LABEL%
 if "%LABEL%" == ":serial" goto %LABEL%
 goto :EOF
 
