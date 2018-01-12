@@ -73,6 +73,7 @@ rem  using 'call' here is important @url http://ss64.com/nt/syntax-replace.html
 call set CMD=%%ARGS:%LABEL% =%%
 rem  define valid labels
 if "%LABEL%" == ":eexec" goto %LABEL%
+if "%LABEL%" == ":eexeccmd" goto %LABEL%
 if "%LABEL%" == ":ebegin" goto %LABEL%
 if "%LABEL%" == ":einfo" goto %LABEL%
 if "%LABEL%" == ":ewarn" goto %LABEL%
@@ -82,12 +83,29 @@ if "%LABEL%" == ":edevel" goto %LABEL%
 if "%LABEL%" == ":serial" goto %LABEL%
 goto :EOF
 
-rem eexec things and log accordingly of 2 debug levels :
+rem execute command and log accordingly of 2 debug levels :
 rem	DEBUG		simply log the command line to the console
 rem	DEVEL	log output to the console
 rem @param	full command line with arguments (enclose in double quote if you hav pipes)
 rem @return	ERRORLEVEL
 :eexec
+rem set ARGS=%*
+rem set CMD=%ARGS::eexec =%
+if defined DEBUG echo  * DBG: %CMD%
+if defined DEVEL %CMD%
+if NOT defined DEVEL %CMD% >nul 2>nul
+if %ERRORLEVEL% GTR 0 (
+    call :eerror %CMD%
+	exit /B %ERRORLEVEL%
+)
+goto :EOF
+
+rem execute command within a %COMSPEC% environment and log accordingly of 2 debug levels :
+rem	DEBUG		simply log the command line to the console
+rem	DEVEL	log output to the console
+rem @param	full command line with arguments (enclose in double quote if you hav pipes)
+rem @return	ERRORLEVEL
+:eexeccmd
 rem set ARGS=%*
 rem set CMD=%ARGS::eexec =%
 if defined DEBUG echo  * DBG: %CMD%
