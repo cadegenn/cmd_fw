@@ -1,0 +1,16 @@
+# How to build cmd_fw installer
+
+On a Windows machine, download and install latest version of the http://nsis.sourceforge.net/Main_Page[NSIS installer]
+
+Open a command prompt, go to the repository where you cloned pwsh_fw, then do
+
+[dos]
+----
+cd nsis
+"c:\Program Files\NSIS\Bin\makensis.exe" /INPUTCHARSET UTF8 /OUTPUTCHARSET UTF8 /DVERSION=1.0.1.0 cmd_fw.nsi
+----
+
+[NOTE]
+----
+/DVERSION is a mandatory parameter and must be of the form w.x.y.z (4 numbers separated with dots)
+----
