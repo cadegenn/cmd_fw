@@ -1,3 +1,8 @@
+[![latest release](https://img.shields.io/github/release/cadegenn/cmd_fw.svg)](../../releases/latest)
+[![license](https://img.shields.io/github/license/cadegenn/cmd_fw.svg)](LICENSE)
+
+<img align="left" width="64" height="64" src="images/cmd_fw.png">
+
 # cmd
 
 Contains API related to ```*.cmd``` scripts
