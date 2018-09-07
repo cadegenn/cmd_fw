@@ -30,7 +30,7 @@
 !define PRODUCT_SHORTNAME "CMDFw"
 !define PRODUCT_DESCRIPTION "A small ComSpec FrameWork"
 !define PRODUCT_VERSION "${VERSION}"
-!define PRODUCT_PUBLISHER "Université de La Rochelle"
+!define PRODUCT_PUBLISHER "Charles-Antoine Degennes"
 !define PRODUCT_WEB_SITE "https://github.com/cadegenn/${PRODUCT_CODENAME}"
 !define PRODUCT_COPYRIGHT "GPL v3+"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${GUID}"
@@ -125,6 +125,8 @@ Section "Install"
 	SetOutPath "$INSTDIR"
 	
 	; pack everything
+	File /r "..\bin"
+	File /r "..\cmd"
 	File /r "..\lib"
 	File "..\*.cmd"
 	File "..\*.md"
@@ -132,9 +134,6 @@ Section "Install"
 	File "..\LICENSE"
 	
 	; write registry values
-	; configure ComSpec policy execution to "RemoteSigned"
-	DetailPrint "Configuring ComSpec ExecutionPolicy to RemoteSigned"
-	WriteRegStr HKLM "SOFTWARE\Microsoft\ComSpec\1\ShellIds\Microsoft.ComSpec" "ExecutionPolicy" "RemoteSigned"
 	; CMD_fw custom entries
 	WriteRegStr HKLM "Software\${PRODUCT_CODENAME}" "InstallDir" $INSTDIR
 	WriteRegStr HKLM "Software\${PRODUCT_CODENAME}" "version" ${VERSION}
