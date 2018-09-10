@@ -125,12 +125,13 @@ Section "Install"
 	SetOutPath "$INSTDIR"
 	
 	; pack everything
-	File /r "..\bin"
+	; File /r "..\bin"
 	File /r "..\cmd"
 	File /r "..\lib"
 	File "..\*.cmd"
 	File "..\*.md"
 	File "..\images\${PRODUCT_CODENAME}.ico"
+	File "..\images\${PRODUCT_CODENAME}.png"
 	File "..\LICENSE"
 	
 	; write registry values
