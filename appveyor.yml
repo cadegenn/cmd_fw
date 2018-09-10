@@ -1,0 +1,73 @@
+#---------------------------------#
+#      general configuration      #
+#---------------------------------#
+
+version: 1.0.0.{build}
+
+# os: WMF 5
+
+#---------------------------------#
+#    environment configuration    #
+#---------------------------------#
+
+# Build worker image (VM template)
+image: Visual Studio 2015
+
+# scripts that are called at very beginning, before repo cloning
+init:
+  - cmd: echo Pass #1 - Init ------------------------
+  - git config --global core.autocrlf input
+
+# clone directory
+# clone_folder: c:\projects\myproject
+
+# fetch repository as zip archive
+shallow_clone: true                 # default is "false"
+
+# set clone depth
+clone_depth: 1                      # clone entire repository history if not defined
+
+# scripts that run after cloning repository
+install:
+  - cmd: echo Pass #2 - Install ---------------------
+  - cmd: set
+  - cmd: echo %Configuration%
+  - cmd: if "%Configuration%"" == "Debug"  echo DEBUG
+  - cmd: if "%Configuration%"" == "Release"  echo RELEASE
+
+#---------------------------------#
+#       build configuration       #
+#---------------------------------#
+
+platform:
+  - x86
+#  - amd64
+
+configuration:
+  - Debug
+  # - Release
+  
+# scripts to run before build
+before_build:
+  - cmd: echo Pass #3 - Before Build ----------------
+  # - pwsh: ./os.ps1 -d -dev -api .
+  # - pwsh: Get-ChildItem "env:"
+
+# scripts to run *after* solution is built and *before* automatic packaging occurs (web apps, NuGet packages, Azure Cloud Services)
+before_package:
+  - cmd: echo Pass #4 - Before Package --------------
+
+# to run your custom scripts instead of automatic MSBuild
+build_script:
+  - cmd: echo Pass #5 - Build Script ----------------
+
+# scripts to run after build
+after_build:
+  - cmd: echo Pass #6 - After Build -----------------
+  - cmd: makensis.exe /INPUTCHARSET UTF8 /OUTPUTCHARSET UTF8 /DVERSION=%APPVEYOR_BUILD_VERSION% %APPVEYOR_BUILD_FOLDER%\nsis\cmd_fw.nsi
+
+  # artifacts @see https://www.appveyor.com/docs/packaging-artifacts/
+artifacts:
+  - path: nsis/CmdFw-%APPVEYOR_BUILD_VERSION%.exe
+    name: Setup
+    type: File
