@@ -25,7 +25,7 @@
 #
 !define PRODUCT_CODENAME "cmd_fw"
 !define GUID "${PRODUCT_CODENAME}"
-!define PRODUCT_FULLNAME "Tiny {COMSPEC} Framework"
+!define PRODUCT_FULLNAME "Tiny %COMSPEC% Framework"
 !define PRODUCT_NAME "CMD Fw"
 !define PRODUCT_SHORTNAME "CMDFw"
 !define PRODUCT_DESCRIPTION "A small ComSpec FrameWork"
