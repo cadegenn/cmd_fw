@@ -59,6 +59,7 @@ if %1 == -y goto arg_yes
 if %1 == -q goto arg_quiet
 if %1 == -d goto arg_debug
 if %1 == -dev goto arg_devel
+if %1 == -api goto arg_api
 goto arg_help
 
 :arg_yes
@@ -78,6 +79,12 @@ goto arg_end
 :arg_devel
 set DEBUG=true
 set DEVEL=true
+goto arg_end
+
+:arg_api
+shift
+set CMDFW_PATH=%1
+if not exist "%CMDFW_PATH%\lib\api.cmd" set CMDFW_PATH=
 goto arg_end
 
 :arg_help
