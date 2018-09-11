@@ -41,6 +41,11 @@ set QUIET=
 set DEBUG=
 set DEVEL=
 set YES=
+set CMDFW_PATH=
+
+rem check instal directory
+for /F "tokens=2*" %%u in ('reg query HKLM\SOFTWARE\cmd_fw /v InstallDir ^| find "REG_"') do set CMDFW_PATH=%%v
+REM echo %CMDFW_PATH%
 
 rem ::::::::::::::::::::::::::::::::::::::::::::::::
 rem 
@@ -99,8 +104,16 @@ rem END parsing command line
 rem
 rem ::::::::::::::::::::::::::::::::::::::::::::::::
 
+rem CMDFW_PATH : if not found, assume we are running bundled script (script + framework)
+if not defined CMDFW_PATH set CMDFW_PATH=%DIRNAME%
+if not exist "%CMDFW_PATH%\lib\api.cmd" (
+	echo Tiny %%COMSPEC%% Framework not found. Aborting.
+	goto :end
+)
+path "%CMDFW_PATH%\cmd";%PATH%
+
 rem load windows variables
-call "%DIRNAME%\lib\api.cmd"
+call "%CMDFW_PATH%\lib\api.cmd"
 
 rem ::::::::::::::::::::::::::::::::::::::::::::::::
 rem
