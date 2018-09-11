@@ -26,6 +26,7 @@
 !define PRODUCT_CODENAME "cmd_fw"
 !define GUID "${PRODUCT_CODENAME}"
 !define PRODUCT_FULLNAME "Tiny %COMSPEC% Framework"
+!define PRODUCT_FULLNAME_SAFE "Tiny COMSPEC Framework"
 !define PRODUCT_NAME "CMD Fw"
 !define PRODUCT_SHORTNAME "CMDFw"
 !define PRODUCT_DESCRIPTION "A small ComSpec FrameWork"
@@ -36,7 +37,7 @@
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${GUID}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 ; !define DEFAULT_INSTALL_DIR "$COMMONFILES64\${PRODUCT_CODENAME}\"
-!define DEFAULT_INSTALL_DIR "$PROGRAMFILES64\${PRODUCT_FULLNAME}\"
+!define DEFAULT_INSTALL_DIR "$PROGRAMFILES64\${PRODUCT_FULLNAME_SAFE}\"
 
 #
 # General Attributes
