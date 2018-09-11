@@ -26,7 +26,7 @@ rem        GNU General Public License for more details.
 rem 
 rem        You should have received a copy of the GNU General Public License
 rem        along with Tiny %COMSPEC% Framework.  If not, see <http://www.gnu.org/licenses/>.
-rem
+rem 
 
 rem initialize window title
 title %0
@@ -69,7 +69,7 @@ goto arg_end
 :arg_quiet
 set DEBUG=
 set DEVEL=
-set QUIET=
+set QUIET=true
 goto arg_end
 
 :arg_debug
