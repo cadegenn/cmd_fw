@@ -138,16 +138,21 @@ Section "Install"
 	File "..\images\${PRODUCT_CODENAME}.ico"
 	File "..\images\${PRODUCT_CODENAME}.png"
 	File "..\LICENSE"
+    ; CreateDirectory "$INSTDIR\includes"
 
     CreateDirectory "$SMPROGRAMS\${PRODUCT_FULLNAME_SAFE}"
     # link.lnk target.file [parameters [icon.file [icon_index_number [start_options [keyboard_shortcut [description]]]]]]
     # see @url http://nsis.sourceforge.net/Reference/CreateShortCut
-    CreateShortCut "$SMPROGRAMS\${PRODUCT_FULLNAME_SAFE}\${PRODUCT_FULLNAME_SAFE} - Console.lnk" "%COMSPEC%" '/k "$INSTDIR\skel.cmd"' "$INSTDIR\${PRODUCT_CODENAME}.ico" 0 SW_SHOWNORMAL ALT|CONTROL|SHIFT|F2 "${PRODUCT_DESCRIPTION}"
+    CreateShortCut "$SMPROGRAMS\${PRODUCT_FULLNAME_SAFE}\${PRODUCT_FULLNAME_SAFE} - Console.lnk" "%COMSPEC%" '/k "$INSTDIR\includes\globals.cmd" -d -dev' "$INSTDIR\${PRODUCT_CODENAME}.ico" 0 SW_SHOWNORMAL ALT|CONTROL|SHIFT|F2 "${PRODUCT_DESCRIPTION}"
 	
 	; write registry values
 	; CMD_fw custom entries
 	WriteRegStr HKLM "Software\${PRODUCT_CODENAME}" "InstallDir" $INSTDIR
 	WriteRegStr HKLM "Software\${PRODUCT_CODENAME}" "version" ${VERSION}
+    ; configure EnableExtensions and DelayedExpansion (mainly for older Operating Systems)
+	WriteRegStr HKLM "SOFTWARE\Microsoft\Command Processor" "DelayedExpansion" 1
+	WriteRegStr HKLM "SOFTWARE\Microsoft\Command Processor" "EnableExtensions" 1
+
 	; add/remove programs
 	DetailPrint "Registering uninstallation options in add/remove programs"
 	WriteRegStr HKLM ${PRODUCT_UNINST_KEY} "DisplayName" "${PRODUCT_FULLNAME}"
@@ -165,14 +170,14 @@ Section "Install"
 	IntFmt $0 "0x%08X" $0
 	WriteRegDWORD HKLM ${PRODUCT_UNINST_KEY} "EstimatedSize" "$0"
 
-	; ; ; install NuGet ComSpec repository to ease further modules installation
-	; ; DetailPrint "Installing NuGet package provider"
-	; ; #!system 'ComSpec.exe -ExecutionPolicy bypass -Command "Install-PackageProvider -Name NuGet -Force"'
-	; ; nsExec::ExecToLog 'ComSpec.exe -ExecutionPolicy bypass -Command "Install-PackageProvider -Name NuGet -Force"'
-	; ; DetailPrint "Installing PsIni module"
-	; ; nsExec::ExecToLog 'ComSpec.exe -ExecutionPolicy bypass -Command "Install-Module -Name PsIni -Confirm:$$false -Force"'
-	; DetailPrint "Running post-install ComSpec script"
-	; nsExec::ExecToLog '"$INSTDIR\post-install.cmd"'
+	; ; install NuGet ComSpec repository to ease further modules installation
+	; DetailPrint "Installing NuGet package provider"
+	; #!system 'ComSpec.exe -ExecutionPolicy bypass -Command "Install-PackageProvider -Name NuGet -Force"'
+	; nsExec::ExecToLog 'ComSpec.exe -ExecutionPolicy bypass -Command "Install-PackageProvider -Name NuGet -Force"'
+	; DetailPrint "Installing PsIni module"
+	; nsExec::ExecToLog 'ComSpec.exe -ExecutionPolicy bypass -Command "Install-Module -Name PsIni -Confirm:$$false -Force"'
+	DetailPrint "Running post-install ComSpec script"
+	nsExec::ExecToLog '"$INSTDIR\post-install.cmd" -d -dev'
 	
 	WriteUninstaller $INSTDIR\uninst.exe
 SectionEnd
