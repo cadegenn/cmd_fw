@@ -278,6 +278,7 @@ for /f "tokens=1,2* delims==" %%i in ('set BIOS') do (
 rem finally write down everything to an include file.
 mkdir "%INSTDIR%\includes"
 > "%INSTDIR%\includes\globals.cmd" (
+    @echo @echo off
     for /f "tokens=1,2* delims==" %%i in ('set ARCH') do @echo set %%i=%%j
     for /f "tokens=1,2* delims==" %%i in ('set UsersDir') do @echo set %%i=%%j
     for /f "tokens=1,2* delims==" %%i in ('set ProgFiles') do @echo set %%i=%%j
