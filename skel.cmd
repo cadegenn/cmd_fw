@@ -1,5 +1,5 @@
 @echo off
-setlocal enableExtensions enableDelayedExpansion
+setlocal EnableDelayedExpansion
 
 rem
 rem @file skel.cmd
@@ -98,7 +98,7 @@ echo    -y          assume 'yes' to all questions
 goto :EOF
 
 :arg_unknown
-call "%DIRNAME%\lib\efunctions.cmd" :eerror Unknown argument : %1
+echo  * ERR: Unknown argument : %1
 goto arg_help
 
 :arg_end
@@ -121,12 +121,19 @@ path "%CMDFW_PATH%\cmd";%PATH%
 
 rem load windows variables
 call "%CMDFW_PATH%\lib\api.cmd"
+call edevel Using COMSPEC Framework from "%CMDFW_PATH%"
+if exist "%CMDFW_PATH%\includes\globals.cmd" (
+    call edevel Loading globals variables 
+    call "%CMDFW_PATH%\includes\globals.cmd"
+)
 
 rem ::::::::::::::::::::::::::::::::::::::::::::::::
 rem
 rem YOUR SCRIPT GOES HERE !
 rem
 rem ::::::::::::::::::::::::::::::::::::::::::::::::
+
+
 
 rem ::::::::::::::::::::::::::::::::::::::::::::::::
 rem
