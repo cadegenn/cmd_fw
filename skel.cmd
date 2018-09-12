@@ -1,5 +1,4 @@
 @echo off
-setlocal EnableDelayedExpansion
 
 rem
 rem @file skel.cmd
@@ -133,7 +132,8 @@ rem YOUR SCRIPT GOES HERE !
 rem
 rem ::::::::::::::::::::::::::::::::::::::::::::::::
 
-
+REM Feel free to remove this line when you write your own script
+REM if defined SHOW_BANNER type %CMDFW_PATH%\banner.txt
 
 rem ::::::::::::::::::::::::::::::::::::::::::::::::
 rem
