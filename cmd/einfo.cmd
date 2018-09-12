@@ -1,3 +1,4 @@
+@echo off
 rem
 rem @file einfo.cmd
 rem @project cmd_fw

@@ -1,3 +1,4 @@
+@echo off
 rem
 rem @file eeror.cmd
 rem @project cmd_fw
