@@ -143,7 +143,7 @@ Section "Install"
     CreateDirectory "$SMPROGRAMS\${PRODUCT_FULLNAME_SAFE}"
     # link.lnk target.file [parameters [icon.file [icon_index_number [start_options [keyboard_shortcut [description]]]]]]
     # see @url http://nsis.sourceforge.net/Reference/CreateShortCut
-    CreateShortCut "$SMPROGRAMS\${PRODUCT_FULLNAME_SAFE}\${PRODUCT_FULLNAME_SAFE} - Console.lnk" "%COMSPEC%" '/k "$INSTDIR\includes\globals.cmd" -d -dev' "$INSTDIR\${PRODUCT_CODENAME}.ico" 0 SW_SHOWNORMAL ALT|CONTROL|SHIFT|F2 "${PRODUCT_DESCRIPTION}"
+    CreateShortCut "$SMPROGRAMS\${PRODUCT_FULLNAME_SAFE}\${PRODUCT_FULLNAME_SAFE} - Console.lnk" "%COMSPEC%" '/k "$INSTDIR\skel.cmd" -d -dev' "$INSTDIR\${PRODUCT_CODENAME}.ico" 0 SW_SHOWNORMAL ALT|CONTROL|SHIFT|F2 "${PRODUCT_DESCRIPTION}"
 	
 	; write registry values
 	; CMD_fw custom entries
