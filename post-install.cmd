@@ -172,12 +172,34 @@ rem if exist "%ProgramFiles(x86)%" set ProgFiles_x64=%ProgramFiles(x86)%
 call edevel ProgFiles^(x86^) = %ProgFiles(x86)%
 call edevel ProgFiles^(x64^) = %ProgFiles(x64)%
 
-for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Programs"') do set CommonPrograms=%%j
-for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Desktop"') do set CommonDesktop=%%j
-for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Startup"') do set CommonStartup=%%j
-for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common AppData"') do set CommonAppData=%%j
-for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Documents"') do set CommonDocuments=%%j
-for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Setup\State" ^| find "REG_SZ"') do set Windows_%%i=%%k
+REM for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Programs"') do set CommonPrograms=%%j
+REM for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Desktop"') do set CommonDesktop=%%j
+REM for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Startup"') do set CommonStartup=%%j
+REM for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common AppData"') do set CommonAppData=%%j
+REM for /f "tokens=3*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Documents"') do set CommonDocuments=%%j
+REM for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Setup\State" ^| find "REG_SZ"') do set Windows_%%i=%%k
+rem we will try to use a more generic version
+rem 1st pass, extract all values from registry, replace REG_* with an arbitratry one-char separator
+set SEP=/
+del /q "%TEMP%\shellfolders.txt"
+for /f "tokens=*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" ^| find "REG_SZ"') do (
+    set "line=%%i"
+    echo !line:    REG_SZ    =%SEP%!
+) >> "%TEMP%\shellfolders.txt"
+for /f "tokens=*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" ^| find "REG_DWORD"') do (
+    set "line=%%i"
+    echo !line:    REG_DWORD    =%SEP%!
+) >> "%TEMP%\shellfolders.txt"
+type "%TEMP%\shellfolders.txt"
+rem second pass, use %SEP% to correctly separate fields
+for /f "tokens=1* delims=%SEP%" %%i in ('type "%TEMP%\shellfolders.txt"') do (
+    rem remove spaces from key name
+    set keytmp=%%i
+    set key=!keytmp: =!
+    REM call edevel !key! - %%j
+    call set !key!=%%j
+)
+
 set UsersDir=%SystemDrive%\Documents and settings
 if exist "%SystemDrive%\Users" set UsersDir=%SystemDrive%\Users
 call edevel UsersDir = %UsersDir%
@@ -280,6 +302,7 @@ mkdir "%INSTDIR%\includes"
 > "%INSTDIR%\includes\globals.cmd" (
     @echo @echo off
     for /f "tokens=1,2* delims==" %%i in ('set ARCH') do @echo set %%i=%%j
+    for /f "tokens=1,2* delims==" %%i in ('set Common') do @echo set %%i=%%j
     for /f "tokens=1,2* delims==" %%i in ('set UsersDir') do @echo set %%i=%%j
     for /f "tokens=1,2* delims==" %%i in ('set ProgFiles') do @echo set %%i=%%j
     for /f "tokens=1,2* delims==" %%i in ('set HKLM') do @echo set %%i=%%j
