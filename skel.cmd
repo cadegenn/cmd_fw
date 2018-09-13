@@ -78,10 +78,12 @@ set VERBOSE=true
 goto arg_end
 
 :arg_debug
+set VERBOSE=true
 set DEBUG=true
 goto arg_end
 
 :arg_devel
+set VERBOSE=true
 set DEBUG=true
 set DEVEL=true
 goto arg_end
