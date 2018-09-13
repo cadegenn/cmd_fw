@@ -37,6 +37,7 @@ if %DIRNAME:~-1%==\ set DIRNAME=%DIRNAME:~0,-1%
 set BASENAME=%~nx0
 
 set QUIET=
+set VERBOSE=
 set DEBUG=
 set DEVEL=
 set YES=
@@ -56,6 +57,7 @@ if x%1 == x goto end-args-loop
 if %1 == -h goto arg_help
 if %1 == -y goto arg_yes
 if %1 == -q goto arg_quiet
+if %1 == -v goto arg_verbose
 if %1 == -d goto arg_debug
 if %1 == -dev goto arg_devel
 if %1 == -api goto arg_api
@@ -69,6 +71,10 @@ goto arg_end
 set DEBUG=
 set DEVEL=
 set QUIET=true
+goto arg_end
+
+:arg_verbose
+set VERBOSE=true
 goto arg_end
 
 :arg_debug
