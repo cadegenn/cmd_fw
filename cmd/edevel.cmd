@@ -29,3 +29,5 @@ rem
 rem @brief  print a debug on the console (only if DEBUG is set)
 rem @param	(string)	message without quotes
 if defined DEVEL echo %PREPEND% DEV:%INDENT:_= %%*
+
+

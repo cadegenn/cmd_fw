@@ -29,3 +29,5 @@ rem
 rem @brief  print a message on the console
 rem @param	(string)	message without quotes
 if NOT DEFINED QUIET echo %PREPEND% %INDENT:_= %%*
+
+
