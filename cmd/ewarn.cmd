@@ -29,3 +29,5 @@ rem
 rem print a warning on the console
 rem @param	(string)	message without quotes
 if NOT DEFINED QUIET echo %PREPEND% WRN:%INDENT:_= %%*
+
+

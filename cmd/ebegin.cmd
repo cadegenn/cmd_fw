@@ -1,3 +1,4 @@
+@echo off
 rem
 rem @file ebegin.cmd
 rem @project cmd_fw
