@@ -98,6 +98,7 @@ goto arg_end
 echo DESCRIPTION: %BASENAME% do some things
 echo USAGE: %BASENAME% [-q] [-d] [-dev] [-h] [-y]
 echo    -q          quiet: do not print anything
+echo    -v          verbose mode: print additional messages
 echo    -d          debug mode: print VARIABLE=value pairs
 echo    -dev        devel mode: print additional development data
 echo    -h          help screen (this screen^)
