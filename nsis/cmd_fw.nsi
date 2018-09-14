@@ -132,13 +132,13 @@ Section "Install"
 	; pack everything
 	; File /r "..\bin"
 	File /r "..\cmd"
+	File /r "..\includes"
 	File /r "..\lib"
 	File "..\*.cmd"
 	File "..\*.md"
 	File "..\images\${PRODUCT_CODENAME}.ico"
 	File "..\images\${PRODUCT_CODENAME}.png"
 	File "..\LICENSE"
-    ; CreateDirectory "$INSTDIR\includes"
 
     CreateDirectory "$SMPROGRAMS\${PRODUCT_FULLNAME_SAFE}"
     # link.lnk target.file [parameters [icon.file [icon_index_number [start_options [keyboard_shortcut [description]]]]]]
