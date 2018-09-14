@@ -133,6 +133,10 @@ if exist "%CMDFW_PATH%\includes\globals.cmd" (
     call edevel Loading globals variables 
     call "%CMDFW_PATH%\includes\globals.cmd"
 )
+if exist "%CMDFW_PATH%\includes\runtime.cmd" (
+    call edevel Loading runtime variables 
+    call "%CMDFW_PATH%\includes\runtime.cmd"
+)
 
 rem ::::::::::::::::::::::::::::::::::::::::::::::::
 rem
