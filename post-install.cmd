@@ -28,10 +28,6 @@ rem        along with Tiny %COMSPEC% Framework.  If not, see <http://www.gnu.org
 rem 
 rem
 
-rem @param  (string)    Path to cmd_fw installation ($INSDIR when called from installer)
-set INSTDIR=%1
-if not defined INSTDIR set INSTDIR=%TEMP%
-
 rem initialize window title
 title %0
 
@@ -64,17 +60,7 @@ if %1 == -q goto arg_quiet
 if %1 == -d goto arg_debug
 if %1 == -dev goto arg_devel
 if %1 == -api goto arg_api
-if %1 == -instdir goto arg_instdir
 goto arg_help
-
-:arg_instdir
-shift
-set INSTDIR=%~1
-if not exist "%INSTDIR%" (
-    echo  * ERR: Installation directory "%INSTDIR%" not found. Aborting.
-    goto :end
-)
-goto arg_end
 
 :arg_yes
 set YES=true
@@ -298,8 +284,8 @@ for /f "tokens=1,2* delims==" %%i in ('set BIOS') do (
 )
 
 rem finally write down everything to an include file.
-mkdir "%INSTDIR%\includes"
-> "%INSTDIR%\includes\globals.cmd" (
+mkdir "%DIRNAME%\includes"
+> "%DIRNAME%\includes\globals.cmd" (
     @echo @echo off
     for /f "tokens=1,2* delims==" %%i in ('set ARCH') do @echo set %%i=%%j
     for /f "tokens=1,2* delims==" %%i in ('set Common') do @echo set %%i=%%j
