@@ -62,5 +62,5 @@ More advanced example
 rem read a value from registry
 call regread HKLM\Software\7-Zip Path
 set 7ZIP=%REGDATA%
-call edevel 7ZIP = %7ZIP%
+call edevel 7ZIP = !7ZIP!
 ```
