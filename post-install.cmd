@@ -47,11 +47,9 @@ rem check instal directory
 for /F "tokens=2*" %%u in ('reg query HKLM\SOFTWARE\cmd_fw /v InstallDir ^| find "REG_"') do set CMDFW_PATH=%%v
 REM echo %CMDFW_PATH%
 
-rem ::::::::::::::::::::::::::::::::::::::::::::::::
-rem 
-rem BEGIN parsing command line
-rem
-rem ::::::::::::::::::::::::::::::::::::::::::::::::
+rem ################################
+rem ## BEGIN parsing command line ##
+rem ################################
 :begin-args-loop
 if x%1 == x goto end-args-loop
 if %1 == -h goto arg_help
@@ -105,11 +103,9 @@ goto arg_help
 shift
 goto begin-args-loop
 :end-args-loop
-rem ::::::::::::::::::::::::::::::::::::::::::::::::
-rem
-rem END parsing command line
-rem
-rem ::::::::::::::::::::::::::::::::::::::::::::::::
+rem ################################
+rem ## END   parsing command line ##
+rem ################################
 
 rem CMDFW_PATH : if not found, assume we are running bundled script (script + framework)
 if not defined CMDFW_PATH set CMDFW_PATH=%DIRNAME%
@@ -123,20 +119,18 @@ rem load windows variables
 call "%CMDFW_PATH%\lib\api.cmd"
 call edevel Using COMSPEC Framework from "%CMDFW_PATH%"
 
-rem ::::::::::::::::::::::::::::::::::::::::::::::::
-rem
-rem YOUR SCRIPT GOES HERE !
-rem
-rem ::::::::::::::::::::::::::::::::::::::::::::::::
+rem ################################
+rem ## YOUR SCRIPT BEGINS HERE    ##
+rem ################################
 
-rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+rem ################################
 rem OS Architecture
 rem
 set ARCH=x86
 if "%PROCESSOR_ARCHITECTURE%" == "AMD64" set ARCH=x64
 call edevel ARCH = %ARCH%
 
-rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+rem ################################
 rem Folders
 rem
 rem ProgramFiles 32bits
@@ -184,7 +178,7 @@ set UsersDir=%SystemDrive%\Documents and settings
 if exist "%SystemDrive%\Users" set UsersDir=%SystemDrive%\Users
 call edevel UsersDir = %UsersDir%
 
-rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+rem ################################
 rem Registry
 rem
 rem HKLM_SOFTWARE
@@ -199,7 +193,7 @@ set HKLM_UNINSTALL(x64)=%HKLM_SOFTWARE(x64)%\Microsoft\Windows\CurrentVersion\Un
 call edevel HKLM_UNINSTALL^(x86^) = %HKLM_UNINSTALL(x86)%
 call edevel HKLM_UNINSTALL^(x64^) = %HKLM_UNINSTALL(x64)%
 
-rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+rem ################################
 rem Windows version
 rem
 for /f "tokens=1,2*" %%i in ('reg query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion" ^| find "REG_SZ"') do set Windows_%%i=%%k
@@ -254,7 +248,7 @@ if "%Windows_InstallationType%" == "WindowsPE" (
 )
 for /f "tokens=1,2* delims==" %%i in ('set Windows_') do call edebug %%i = %%j
 
-rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+rem ################################
 rem Computer
 rem
 for /f "tokens=1*" %%v in ('reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Group Policy\State\Machine" /v "Distinguished-Name" ^| findstr REG_SZ') do set ComputerDN=%%w
@@ -291,11 +285,9 @@ mkdir "%DIRNAME%\includes"
     for /f "tokens=1,2* delims==" %%i in ('set BIOS') do @echo set %%i=%%j
 )
 
-rem ::::::::::::::::::::::::::::::::::::::::::::::::
-rem
-rem YOUR SCRIPT END HERE !
-rem
-rem ::::::::::::::::::::::::::::::::::::::::::::::::
+rem ################################
+rem ## YOUR SCRIPT ENDS   HERE    ##
+rem ################################
 
 :end
 rem reset window title
