@@ -47,11 +47,9 @@ rem check instal directory
 for /F "tokens=2*" %%u in ('reg query HKLM\SOFTWARE\cmd_fw /v InstallDir ^| find "REG_"') do set CMDFW_PATH=%%v
 REM echo %CMDFW_PATH%
 
-rem ::::::::::::::::::::::::::::::::::::::::::::::::
-rem 
-rem BEGIN parsing command line
-rem
-rem ::::::::::::::::::::::::::::::::::::::::::::::::
+rem ################################
+rem ## BEGIN parsing command line ##
+rem ################################
 :begin-args-loop
 if x%1 == x goto end-args-loop
 if %1 == -h goto arg_help
@@ -122,11 +120,9 @@ goto arg_help
 shift
 goto begin-args-loop
 :end-args-loop
-rem ::::::::::::::::::::::::::::::::::::::::::::::::
-rem
-rem END parsing command line
-rem
-rem ::::::::::::::::::::::::::::::::::::::::::::::::
+rem ################################
+rem ## END   parsing command line ##
+rem ################################
 
 rem CMDFW_PATH : if not found, assume we are running bundled script (script + framework)
 if not defined CMDFW_PATH set CMDFW_PATH=%DIRNAME%
@@ -148,20 +144,16 @@ if exist "%CMDFW_PATH%\includes\runtime.cmd" (
     call "%CMDFW_PATH%\includes\runtime.cmd"
 )
 
-rem ::::::::::::::::::::::::::::::::::::::::::::::::
-rem
-rem YOUR SCRIPT GOES HERE !
-rem
-rem ::::::::::::::::::::::::::::::::::::::::::::::::
+rem ################################
+rem ## YOUR SCRIPT BEGINS HERE    ##
+rem ################################
 
 REM Feel free to remove this line when you write your own script
 REM if defined SHOW_BANNER type %CMDFW_PATH%\banner.txt
 
-rem ::::::::::::::::::::::::::::::::::::::::::::::::
-rem
-rem YOUR SCRIPT END HERE !
-rem
-rem ::::::::::::::::::::::::::::::::::::::::::::::::
+rem ################################
+rem ## YOUR SCRIPT ENDS   HERE    ##
+rem ################################
 
 :end
 rem reset window title
