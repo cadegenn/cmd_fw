@@ -26,6 +26,13 @@ rem        along with Tiny %COMSPEC% Framework.  If not, see <http://www.gnu.org
 rem 
 rem
 
+rem @note   regread puts the result into a REGDATA variable.
+rem @note   to use this in a script, follow these guidelines
+rem @note   call regread "HKLM\Path\to\my key" "theValue to read"
+rem @note   set MyVar=%REGDATA%
+
+set "KEY=%1"
+set "VALUE=%2"
 call edebug.cmd KEY = %KEY%
 call edebug.cmd VALUE = %VALUE%
 
@@ -56,9 +63,23 @@ if %ERRORLEVEL% GTR 0 (
     goto :EOF
 )
 
+REM This simple code does not handle VALUE with white space
+REM for /F "tokens=2*" %%u in ('reg query %KEY% /v %VALUE% ^| find "REG_"') do set "DATA=%%v"
+REM echo %DATA%
+REM REM set DATA=
 
+REM This far more complicated code does handle correctly VALUE with white space
+rem 1st pass, extract all values from registry, replace REG_* with an arbitratry one-char separator
+set SEP=/
+if exist "%TEMP%\regread.out" del /q "%TEMP%\regread.out"
+for /f "tokens=*" %%i in ('reg query %KEY% /v %VALUE% ^| find "REG_"') do (
+    set "line=%%i"
+    echo !line:    REG_SZ    =%SEP%!
+) >> "%TEMP%\regread.out"
+rem second pass, use %SEP% to correctly separate fields
+for /f "tokens=1* delims=%SEP%" %%i in ('type "%TEMP%\regread.out"') do (
+    set REGDATA=%%j
+)
+if exist "%TEMP%\regread.out" del /q "%TEMP%\regread.out"
 
-for /F "tokens=2*" %%u in ('reg query %KEY% /v %VALUE% ^| find "REG_"') do set DATA=%%v
-echo %DATA%
-
-
+REM echo %REGDATA%
