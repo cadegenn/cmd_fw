@@ -61,6 +61,7 @@ if %1 == -v goto arg_verbose
 if %1 == -d goto arg_debug
 if %1 == -dev goto arg_devel
 if %1 == -api goto arg_api
+if %1 == -log goto arg_log
 goto arg_help
 
 :arg_yes
@@ -92,6 +93,14 @@ goto arg_end
 shift
 set CMDFW_PATH=%1
 if not exist "%CMDFW_PATH%\lib\api.cmd" set CMDFW_PATH=
+goto arg_end
+
+:arg_log
+shift
+set LOGFILE=%1
+REM to reset logfile on each invocation of %BASENAME%, uncomment following line
+REM to append to logfile on each invocation, comment following line
+> %LOGFILE%
 goto arg_end
 
 :arg_help

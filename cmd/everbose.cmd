@@ -28,6 +28,8 @@ rem
 
 rem @brief  print a verbose on the console (only if VERBOSE is set)
 rem @param	(string)	message without quotes
-if defined VERBOSE echo %PREPEND% VRB:%INDENT:_= %%*
+set MESSAGE=%PREPEND% VRB:%INDENT:_= %%*
+if defined VERBOSE echo %MESSAGE%
+if DEFINED LOGFILE call elog.cmd %MESSAGE%
 
 

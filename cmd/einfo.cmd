@@ -28,6 +28,8 @@ rem
 
 rem @brief  print an information message on the console
 rem @param	(string)	message without quotes
-if NOT DEFINED QUIET echo %PREPEND% INF:%INDENT:_= %%*
+set MESSAGE=%PREPEND% INF:%INDENT:_= %%*
+if NOT DEFINED QUIET echo %MESSAGE%
+if DEFINED LOGFILE call elog.cmd %MESSAGE%
 
 

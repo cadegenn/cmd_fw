@@ -33,8 +33,8 @@ rem @note   set MyVar=%REGDATA%
 
 set "KEY=%1"
 set "VALUE=%2"
-call edebug.cmd KEY = %KEY%
-call edebug.cmd VALUE = %VALUE%
+call edevel.cmd KEY = %KEY%
+call edevel.cmd VALUE = %VALUE%
 
 rem
 rem check parameters
@@ -82,4 +82,5 @@ for /f "tokens=1* delims=%SEP%" %%i in ('type "%TEMP%\regread.out"') do (
 )
 if exist "%TEMP%\regread.out" del /q "%TEMP%\regread.out"
 
+call edevel.cmd REGDATA = %REGDATA%
 REM echo %REGDATA%

@@ -28,6 +28,8 @@ rem
 
 rem @brief  print a debug on the console (only if DEBUG is set)
 rem @param	(string)	message without quotes
-if defined DEBUG echo %PREPEND% DBG:%INDENT:_= %%*
+set MESSAGE=%PREPEND% DBG:%INDENT:_= %%*
+if defined DEBUG echo %MESSAGE%
+if DEFINED LOGFILE call elog.cmd %MESSAGE%
 
 

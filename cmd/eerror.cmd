@@ -28,6 +28,8 @@ rem
 
 rem print an error on the console
 rem @param	(string)	message without quotes
-if NOT DEFINED QUIET echo %PREPEND% ERR:%INDENT:_= %%*
+set MESSAGE=%PREPEND% ERR:%INDENT:_= %%*
+if NOT DEFINED QUIET echo %MESSAGE%
+if DEFINED LOGFILE call elog.cmd %MESSAGE%
 
 
