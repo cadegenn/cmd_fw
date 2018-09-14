@@ -129,12 +129,6 @@ rem YOUR SCRIPT GOES HERE !
 rem
 rem ::::::::::::::::::::::::::::::::::::::::::::::::
 
-if not defined INSTDIR (
-    eerror INSTDIR not defined. Please review help with %BASENAME% -h
-    goto :end
-)
-
-
 rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 rem OS Architecture
 rem
