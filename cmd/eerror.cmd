@@ -29,3 +29,5 @@ rem
 rem print an error on the console
 rem @param	(string)	message without quotes
 if NOT DEFINED QUIET echo %PREPEND% ERR:%INDENT:_= %%*
+
+
