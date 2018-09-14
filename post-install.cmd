@@ -29,7 +29,7 @@ rem
 rem
 
 rem @param  (string)    Path to cmd_fw installation ($INSDIR when called from installer)
-set INSTDIR=$1
+set INSTDIR=%1
 if not defined INSTDIR set INSTDIR=%TEMP%
 
 rem initialize window title
@@ -294,7 +294,7 @@ for /f "tokens=1,2* delims==" %%i in ('set BIOS') do (
     REM remove extra CR
     set !key!=!value:~0,-1!
     REM call edebug %%i = %%j
-    call edebug !key! = !value:~0,-1!
+    call edevel !key! = !value:~0,-1!
 )
 
 rem finally write down everything to an include file.
