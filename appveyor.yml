@@ -66,6 +66,7 @@ after_build:
   - cmd: echo Pass 06 - After Build -----------------
   - cmd: makensis.exe /INPUTCHARSET UTF8 /OUTPUTCHARSET UTF8 /DVERSION=%APPVEYOR_BUILD_VERSION% %APPVEYOR_BUILD_FOLDER%\build\windows\nsis\cmd_fw.nsi
   - cmd: call "%APPVEYOR_BUILD_FOLDER%\build\windows\cab\make.cmd" -api "%APPVEYOR_BUILD_FOLDER%"
+  - cmd: type %APPVEYOR_BUILD_FOLDER%\build\windows\cab\cmd_fw.ddf
   - cmd: makecab.exe /V4 /D VERSION=%APPVEYOR_BUILD_VERSION% /D ROOT=%APPVEYOR_BUILD_FOLDER% %APPVEYOR_BUILD_FOLDER%\build\windows\cab\cmd_fw.ddf
 
   # artifacts @see https://www.appveyor.com/docs/packaging-artifacts/
