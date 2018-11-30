@@ -47,7 +47,7 @@ CrcCheck off # CRC check generates random errors
 Icon "..\images\${PRODUCT_CODENAME}.ico"
 InstallDir "${DEFAULT_INSTALL_DIR}"
 Name "${PRODUCT_NAME}"
-OutFile "${PRODUCT_SHORTNAME}-${VERSION}.exe"
+OutFile "${ROOT}\releases\${PRODUCT_SHORTNAME}-${VERSION}.exe"
 RequestExecutionLevel admin
 
 VIAddVersionKey "ProductName" "${PRODUCT_NAME}"
