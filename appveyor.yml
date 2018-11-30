@@ -64,10 +64,14 @@ build_script:
 # scripts to run after build
 after_build:
   - cmd: echo Pass 06 - After Build -----------------
-  - cmd: makensis.exe /INPUTCHARSET UTF8 /OUTPUTCHARSET UTF8 /DVERSION=%APPVEYOR_BUILD_VERSION% %APPVEYOR_BUILD_FOLDER%\nsis\cmd_fw.nsi
+  - cmd: makensis.exe /INPUTCHARSET UTF8 /OUTPUTCHARSET UTF8 /DVERSION=%APPVEYOR_BUILD_VERSION% %APPVEYOR_BUILD_FOLDER%\build\windows\nsis\cmd_fw.nsi
+  - cmd: makecab.exe /D VERSION=%APPVEYOR_BUILD_VERSION% /D ROOT=%APPVEYOR_BUILD_FOLDER% %APPVEYOR_BUILD_FOLDER%\build\windows\cab\cmd_fw.ddf /L "%ROOT%\releases"
 
   # artifacts @see https://www.appveyor.com/docs/packaging-artifacts/
 artifacts:
   - path: nsis/CmdFw-%APPVEYOR_BUILD_VERSION%.exe
     name: Setup
     type: File
+  - path: nsis/CmdFw-%APPVEYOR_BUILD_VERSION%.cab
+    name: CmdFw-%APPVEYOR_BUILD_VERSION%.cab
+  
