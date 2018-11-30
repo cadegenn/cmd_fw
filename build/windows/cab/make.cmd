@@ -157,12 +157,16 @@ for /F %%r in ('cd'); do set ROOT=%%r
 popd
 call edevel ROOT = %ROOT%
 
-set /p VERSION=<"%ROOT%\VERSION"
-if not exist "%DIRNAME%\BUILD" echo 0 > "%DIRNAME%\BUILD"
-set /p BUILD=<"%DIRNAME%\BUILD"
-set /a BUILD=%BUILD%+1
+if defined APPVEYOR_BUILD_VERSION (
+    set VERSION=%APPVEYOR_BUILD_VERSION%
+) else (
+    set /p VERSION=<"%ROOT%\VERSION"
+    if not exist "%DIRNAME%\..\BUILD" echo 0 > "%DIRNAME%\BUILD"
+    set /p BUILD=<"%DIRNAME%\..\BUILD"
+    set /a BUILD=%BUILD%+1
+    set VERSION=!VERSION!.!BUILD!
+)
 call edevel VERSION = %VERSION%
-call edevel BUILD = %BUILD%
 
 
 set CMDFWDDF=%DIRNAME%\cmd_fw.ddf
