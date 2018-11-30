@@ -38,13 +38,14 @@
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 ; !define DEFAULT_INSTALL_DIR "$COMMONFILES64\${PRODUCT_CODENAME}\"
 !define DEFAULT_INSTALL_DIR "$PROGRAMFILES64\${PRODUCT_FULLNAME_SAFE}\"
+!define ROOT "..\..\.."
 
 #
 # General Attributes
 #
 Unicode true
 CrcCheck off # CRC check generates random errors
-Icon "..\images\${PRODUCT_CODENAME}.ico"
+Icon "${ROOT}\images\${PRODUCT_CODENAME}.ico"
 InstallDir "${DEFAULT_INSTALL_DIR}"
 Name "${PRODUCT_NAME}"
 OutFile "${ROOT}\releases\${PRODUCT_SHORTNAME}-${VERSION}.exe"
@@ -68,7 +69,7 @@ Page instfiles
 UninstPage uninstConfirm
 UninstPage instfiles
 
-LicenseData "..\LICENSE"
+LicenseData "${ROOT}\LICENSE"
 
 #
 # Functions
@@ -130,15 +131,15 @@ Section "Install"
 	SetOutPath "$INSTDIR"
 	
 	; pack everything
-	; File /r "..\bin"
-	File /r "..\cmd"
-	File /r "..\includes"
-	File /r "..\lib"
-	File "..\*.cmd"
-	File "..\*.md"
-	File "..\images\${PRODUCT_CODENAME}.ico"
-	File "..\images\${PRODUCT_CODENAME}.png"
-	File "..\LICENSE"
+	; File /r "${ROOT}\bin"
+	File /r "${ROOT}\cmd"
+	File /r "${ROOT}\includes"
+	File /r "${ROOT}\lib"
+	File "${ROOT}\*.cmd"
+	File "${ROOT}\*.md"
+	File "${ROOT}\images\${PRODUCT_CODENAME}.ico"
+	File "${ROOT}\images\${PRODUCT_CODENAME}.png"
+	File "${ROOT}\LICENSE"
 
     CreateDirectory "$SMPROGRAMS\${PRODUCT_FULLNAME_SAFE}"
     # link.lnk target.file [parameters [icon.file [icon_index_number [start_options [keyboard_shortcut [description]]]]]]

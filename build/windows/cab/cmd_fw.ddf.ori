@@ -1,0 +1,10 @@
+; @url https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/makecab
+; @url https://msdn.microsoft.com/en-us/library/bb417343.aspx#dir_file_syntax
+; @url https://ss64.com/nt/makecab.html
+.Set SourceDir=%ROOT%
+;    CabinetNameTemplate is the name of the output CAB file:
+.Set CabinetNameTemplate=cmdfw-%VERSION%.CAB
+.Set DiskLabelTemplate=cmdfw-%VERSION%
+.Set Cabinet=on
+.Set Compress=on
+.Set UniqueFiles=off

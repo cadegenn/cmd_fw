@@ -1,0 +1,44 @@
+=== Build cabinet
+
+CAB is a Microsoft archive format. You can read more about it https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/makecab[here] and https://msdn.microsoft.com/en-us/library/bb417343.aspx#dir_file_syntax[there].
+
+I found that building a cabinet file is rather complex. It is a two-step process :
+
+. `make` the definition file
+. `build` the cabinet
+
+To `make` the definition file, go to `build\windows\cab` and enter
+
+[source,batch]
+----
+make.cmd
+----
+
+If you want more debug level, you'll use any of `-v`,  `-d` or `-dev` parameters
+
+If `Tiny %COMSPEC% Framework` is not yet installed on your system, you'll use `-api ..\..\..`
+
+.Example
+[source,cmd]
+----
+make.cmd -dev -api ..\..\..
+----
+
+
+=== Install `Tiny %COMSPEC% Framework` from cabinet
+
+We provide a `Tiny %COMSPEC% Framework` as a cabinet to add the ability to install it on an offline system for example.
+
+`cab` files are simple archive. To install `Tiny %COMSPEC% Framework` from a cab file, you'll have to follow these steps :
+
+- download `cmdfw-%VERSION%.cab`
+- extract-it wherever you want. For example in `%ProgramFiles%`
+- run `post-install` script
+
+If `Tiny %COMSPEC% Framework` is not yet installed on your system, you'll have to use `-api .`
+
+.Example
+[source,cmd]
+----
+post-install.cmd -v -api .
+----
