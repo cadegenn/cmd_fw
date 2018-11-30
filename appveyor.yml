@@ -72,7 +72,22 @@ after_build:
   # artifacts @see https://www.appveyor.com/docs/packaging-artifacts/
 artifacts:
   - path: releases/CmdFw-%APPVEYOR_BUILD_VERSION%.exe
-    name: cmdfw-%APPVEYOR_BUILD_VERSION%.exe
-    type: File
+    name: to-publish
   - path: releases/CmdFw-%APPVEYOR_BUILD_VERSION%.cab
-    name: cmdfw-%APPVEYOR_BUILD_VERSION%.cab
+    name: to-publish
+
+# see @url https://www.appveyor.com/docs/deployment/
+# and @url https://www.appveyor.com/docs/deployment/github/
+deploy:
+  description: '$(APPVEYOR_REPO_COMMIT_MESSAGE_EXTENDED)'
+  auth_token:
+    secure: m+LSSJicczPadkIy5LORLVxh1eyK8Onyn0OyEDKKmXAZVlLNd/baAPeryXS/PID+
+  artifact: to-publish
+  appveyor_repo_tag: true        # deploy on tag push only
+  provider: GitHub
+  release: v%APPVEYOR_BUILD_VERSION%  # DRAFT release
+  draft: true
+  prerelease: true
+  force_update: true
+  on:
+    branch: develop
