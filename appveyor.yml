@@ -70,9 +70,8 @@ after_build:
 
   # artifacts @see https://www.appveyor.com/docs/packaging-artifacts/
 artifacts:
-  - path: nsis/CmdFw-%APPVEYOR_BUILD_VERSION%.exe
+  - path: releases/CmdFw-%APPVEYOR_BUILD_VERSION%.exe
     name: Setup
     type: File
-  - path: nsis/CmdFw-%APPVEYOR_BUILD_VERSION%.cab
+  - path: releases/CmdFw-%APPVEYOR_BUILD_VERSION%.cab
     name: CmdFw-%APPVEYOR_BUILD_VERSION%.cab
-  
