@@ -41,6 +41,7 @@ set DEBUG=
 set DEVEL=
 set YES=
 set CMDFW_PATH=
+set VERSION=0.0.0.0
 
 rem check instal directory
 for /F "tokens=2*" %%u in ('reg query HKLM\SOFTWARE\cmd_fw /v InstallDir ^| find "REG_"') do set CMDFW_PATH=%%v
@@ -59,6 +60,7 @@ if %1 == -d goto arg_debug
 if %1 == -dev goto arg_devel
 if %1 == -api goto arg_api
 if %1 == -log goto arg_log
+if %1 == -version goto arg_version
 goto arg_help
 
 :arg_yes
@@ -101,15 +103,21 @@ REM to append to logfile on each invocation, comment following line
 > %LOGFILE%
 goto arg_end
 
+:arg_version
+shift
+set VERSION=%1
+goto arg_end
+
 :arg_help
 echo DESCRIPTION: %BASENAME% do some things
-echo USAGE: %BASENAME% [-q] [-d] [-dev] [-h] [-y]
+echo USAGE: %BASENAME% [-q] [-d] [-dev] [-h] [-y] -version 1.2.3.4
 echo    -q          quiet: do not print anything
 echo    -v          verbose mode: print additional messages
 echo    -d          debug mode: print VARIABLE=value pairs
 echo    -dev        devel mode: print additional development data
 echo    -h          help screen (this screen^)
 echo    -y          assume 'yes' to all questions
+echo    -version    specify version to build
 goto :EOF
 
 :arg_unknown
@@ -157,15 +165,7 @@ for /F %%r in ('cd'); do set ROOT=%%r
 popd
 call edevel ROOT = %ROOT%
 
-if defined APPVEYOR_BUILD_VERSION (
-    set VERSION=%APPVEYOR_BUILD_VERSION%
-) else (
-    set /p VERSION=<"%ROOT%\VERSION"
-    if not exist "%DIRNAME%\..\BUILD" echo 0 > "%DIRNAME%\BUILD"
-    set /p BUILD=<"%DIRNAME%\..\BUILD"
-    set /a BUILD=%BUILD%+1
-    set VERSION=!VERSION!.!BUILD!
-)
+if defined APPVEYOR_BUILD_VERSION set VERSION=%APPVEYOR_BUILD_VERSION%
 call edevel VERSION = %VERSION%
 
 
