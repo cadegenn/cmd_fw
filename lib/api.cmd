@@ -26,6 +26,6 @@ rem
 rem
 
 set INDENT=_
-set PREPEND= * 
+set PREPEND= *
 set TITLECHAR=*
 set LINEBREAKCHAR=-
