@@ -65,7 +65,7 @@ build_script:
 after_build:
   - cmd: echo Pass 06 - After Build -----------------
   - cmd: makensis.exe /INPUTCHARSET UTF8 /OUTPUTCHARSET UTF8 /DVERSION=%APPVEYOR_BUILD_VERSION% %APPVEYOR_BUILD_FOLDER%\build\windows\nsis\cmd_fw.nsi
-  - cmd: "%APPVEYOR_BUILD_FOLDER%\\build\\windows\\cab\\make.cmd" -api "%APPVEYOR_BUILD_FOLDER%"
+  - cmd: "%COMSPEC%" /c "%APPVEYOR_BUILD_FOLDER%\\build\\windows\\cab\\make.cmd" -api "%APPVEYOR_BUILD_FOLDER%"
   - cmd: type %APPVEYOR_BUILD_FOLDER%\build\windows\cab\cmd_fw.ddf
   - cmd: makecab.exe /V3 /D VERSION=%APPVEYOR_BUILD_VERSION% /D ROOT=%APPVEYOR_BUILD_FOLDER% /F %APPVEYOR_BUILD_FOLDER%\build\windows\cab\cmd_fw.ddf
 
