@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [2.0.0]
 ### Added
 . logging support
+. build a cab archive
 
 ### Changed
 . split every e*() functions into its own cmd script
