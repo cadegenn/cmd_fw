@@ -34,10 +34,13 @@ rem	DEVEL	log output to the console
 rem @param	full command line with arguments (enclose in double quote if you hav pipes)
 rem @return	ERRORLEVEL
 call edebug.cmd %CMD%
-if defined DEVEL %COMSPEC% /c %CMD%
-if NOT defined DEVEL %COMSPEC% /c %CMD% >nul 2>nul
-if %ERRORLEVEL% GTR 0 (
+if defined DEVEL %COMSPEC% /c "%CMD%"
+if NOT defined DEVEL %COMSPEC% /c "%CMD%" >nul 2>nul
+REM echo RC = %ERRORLEVEL%
+if /I %ERRORLEVEL% GTR 0 (
     call eerror.cmd %CMD%
+    set CMD=
 	exit /B %ERRORLEVEL%
 )
+set CMD=
 goto :EOF
