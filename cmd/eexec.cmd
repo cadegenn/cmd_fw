@@ -1,8 +1,9 @@
-rem
-rem @file api.cmd
+@echo off
+rem 
+rem @file eexec.cmd
 rem @project cmd_fw
 rem @author Charles-Antoine Degennes (cadegenn@gmail.com)
-rem @date Monday September 10th 2018
+rem @date 2018.09.13
 rem @copyright (c) 2018 Charles-Antoine Degennes
 rem 
 rem @modified 
@@ -25,7 +26,21 @@ rem        along with Tiny %COMSPEC% Framework.  If not, see <http://www.gnu.org
 rem 
 rem
 
-set INDENT=_
-set PREPEND= *
-set TITLECHAR=*
-set LINEBREAKCHAR=-
+set CMD=%*
+
+rem execute command within a %COMSPEC% environment and log accordingly of 2 debug levels :
+rem	DEBUG		simply log the command line to the console
+rem	DEVEL	log output to the console
+rem @param	full command line with arguments (enclose in double quote if you hav pipes)
+rem @return	ERRORLEVEL
+call edebug.cmd %CMD%
+if defined DEVEL %COMSPEC% /c "%CMD%"
+if NOT defined DEVEL %COMSPEC% /c "%CMD%" >nul 2>nul
+REM echo RC = %ERRORLEVEL%
+if /I %ERRORLEVEL% GTR 0 (
+    call eerror.cmd %CMD%
+    set CMD=
+	exit /B %ERRORLEVEL%
+)
+set CMD=
+goto :EOF

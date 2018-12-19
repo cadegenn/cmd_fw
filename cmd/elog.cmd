@@ -1,8 +1,9 @@
-rem
-rem @file api.cmd
+@echo off
+rem 
+rem @file elog.cmd
 rem @project cmd_fw
 rem @author Charles-Antoine Degennes (cadegenn@gmail.com)
-rem @date Monday September 10th 2018
+rem @date 2018.09.14
 rem @copyright (c) 2018 Charles-Antoine Degennes
 rem 
 rem @modified 
@@ -25,7 +26,12 @@ rem        along with Tiny %COMSPEC% Framework.  If not, see <http://www.gnu.org
 rem 
 rem
 
-set INDENT=_
-set PREPEND= *
-set TITLECHAR=*
-set LINEBREAKCHAR=-
+rem @brief  log a message on a file
+rem @param	(string)	message without quotes
+if not defined LOGFILE goto :EOF
+
+>> "%LOGFILE%" (
+    echo %DATE% %TIME% %BASENAME% - %*
+)
+
+

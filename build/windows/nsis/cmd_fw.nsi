@@ -25,27 +25,30 @@
 #
 !define PRODUCT_CODENAME "cmd_fw"
 !define GUID "${PRODUCT_CODENAME}"
-!define PRODUCT_FULLNAME "Tiny {COMSPEC} Framework"
+!define PRODUCT_FULLNAME "Tiny %COMSPEC% Framework"
+!define PRODUCT_FULLNAME_SAFE "Tiny COMSPEC Framework"
 !define PRODUCT_NAME "CMD Fw"
 !define PRODUCT_SHORTNAME "CMDFw"
 !define PRODUCT_DESCRIPTION "A small ComSpec FrameWork"
 !define PRODUCT_VERSION "${VERSION}"
-!define PRODUCT_PUBLISHER "Université de La Rochelle"
+!define PRODUCT_PUBLISHER "Charles-Antoine Degennes"
 !define PRODUCT_WEB_SITE "https://github.com/cadegenn/${PRODUCT_CODENAME}"
 !define PRODUCT_COPYRIGHT "GPL v3+"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${GUID}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
-!define DEFAULT_INSTALL_DIR "$COMMONFILES64\${PRODUCT_CODENAME}\"
+; !define DEFAULT_INSTALL_DIR "$COMMONFILES64\${PRODUCT_CODENAME}\"
+!define DEFAULT_INSTALL_DIR "$PROGRAMFILES64\${PRODUCT_FULLNAME_SAFE}\"
+!define ROOT "..\..\.."
 
 #
 # General Attributes
 #
 Unicode true
 CrcCheck off # CRC check generates random errors
-Icon "..\images\${PRODUCT_CODENAME}.ico"
+Icon "${ROOT}\images\${PRODUCT_CODENAME}.ico"
 InstallDir "${DEFAULT_INSTALL_DIR}"
 Name "${PRODUCT_NAME}"
-OutFile "${PRODUCT_SHORTNAME}-${VERSION}.exe"
+OutFile "${ROOT}\releases\${PRODUCT_SHORTNAME}-${VERSION}.exe"
 RequestExecutionLevel admin
 
 VIAddVersionKey "ProductName" "${PRODUCT_NAME}"
@@ -66,7 +69,7 @@ Page instfiles
 UninstPage uninstConfirm
 UninstPage instfiles
 
-LicenseData "..\LICENSE"
+LicenseData "${ROOT}\LICENSE"
 
 #
 # Functions
@@ -97,6 +100,9 @@ Function .onInit
   ${Else}
 	DetailPrint "Running on a 32-bit Windows..."
   ${EndIf}
+  # set context to "AllUsers"
+  # see @url http://nsis.sourceforge.net/Docs/Chapter4.html#setshellvarcontext
+  SetShellVarContext all
 FunctionEnd
 
 ; this code do not work quite well
@@ -125,19 +131,29 @@ Section "Install"
 	SetOutPath "$INSTDIR"
 	
 	; pack everything
-	File /r "..\lib"
-	File "..\*.cmd"
-	File "..\*.md"
-	File "..\images\${PRODUCT_CODENAME}.ico"
-	File "..\LICENSE"
+	; File /r "${ROOT}\bin"
+	File /r "${ROOT}\cmd"
+	File /r "${ROOT}\includes"
+	File /r "${ROOT}\lib"
+	File "${ROOT}\*.cmd"
+	File "${ROOT}\*.md"
+	File "${ROOT}\images\${PRODUCT_CODENAME}.ico"
+	File "${ROOT}\images\${PRODUCT_CODENAME}.png"
+	File "${ROOT}\LICENSE"
+
+    CreateDirectory "$SMPROGRAMS\${PRODUCT_FULLNAME_SAFE}"
+    # link.lnk target.file [parameters [icon.file [icon_index_number [start_options [keyboard_shortcut [description]]]]]]
+    # see @url http://nsis.sourceforge.net/Reference/CreateShortCut
+    CreateShortCut "$SMPROGRAMS\${PRODUCT_FULLNAME_SAFE}\${PRODUCT_FULLNAME_SAFE} - Console.lnk" "%COMSPEC%" '/k "$INSTDIR\skel.cmd" -d -dev' "$INSTDIR\${PRODUCT_CODENAME}.ico" 0 SW_SHOWNORMAL ALT|CONTROL|SHIFT|F2 "${PRODUCT_DESCRIPTION}"
 	
 	; write registry values
-	; configure ComSpec policy execution to "RemoteSigned"
-	DetailPrint "Configuring ComSpec ExecutionPolicy to RemoteSigned"
-	WriteRegStr HKLM "SOFTWARE\Microsoft\ComSpec\1\ShellIds\Microsoft.ComSpec" "ExecutionPolicy" "RemoteSigned"
 	; CMD_fw custom entries
 	WriteRegStr HKLM "Software\${PRODUCT_CODENAME}" "InstallDir" $INSTDIR
 	WriteRegStr HKLM "Software\${PRODUCT_CODENAME}" "version" ${VERSION}
+    ; configure EnableExtensions and DelayedExpansion (mainly for older Operating Systems)
+	WriteRegStr HKLM "SOFTWARE\Microsoft\Command Processor" "DelayedExpansion" 1
+	WriteRegStr HKLM "SOFTWARE\Microsoft\Command Processor" "EnableExtensions" 1
+
 	; add/remove programs
 	DetailPrint "Registering uninstallation options in add/remove programs"
 	WriteRegStr HKLM ${PRODUCT_UNINST_KEY} "DisplayName" "${PRODUCT_FULLNAME}"
@@ -155,14 +171,14 @@ Section "Install"
 	IntFmt $0 "0x%08X" $0
 	WriteRegDWORD HKLM ${PRODUCT_UNINST_KEY} "EstimatedSize" "$0"
 
-	; ; ; install NuGet ComSpec repository to ease further modules installation
-	; ; DetailPrint "Installing NuGet package provider"
-	; ; #!system 'ComSpec.exe -ExecutionPolicy bypass -Command "Install-PackageProvider -Name NuGet -Force"'
-	; ; nsExec::ExecToLog 'ComSpec.exe -ExecutionPolicy bypass -Command "Install-PackageProvider -Name NuGet -Force"'
-	; ; DetailPrint "Installing PsIni module"
-	; ; nsExec::ExecToLog 'ComSpec.exe -ExecutionPolicy bypass -Command "Install-Module -Name PsIni -Confirm:$$false -Force"'
-	; DetailPrint "Running post-install ComSpec script"
-	; nsExec::ExecToLog '"$INSTDIR\post-install.cmd"'
+	; ; install NuGet ComSpec repository to ease further modules installation
+	; DetailPrint "Installing NuGet package provider"
+	; #!system 'ComSpec.exe -ExecutionPolicy bypass -Command "Install-PackageProvider -Name NuGet -Force"'
+	; nsExec::ExecToLog 'ComSpec.exe -ExecutionPolicy bypass -Command "Install-PackageProvider -Name NuGet -Force"'
+	; DetailPrint "Installing PsIni module"
+	; nsExec::ExecToLog 'ComSpec.exe -ExecutionPolicy bypass -Command "Install-Module -Name PsIni -Confirm:$$false -Force"'
+	DetailPrint "Running post-install ComSpec script"
+	nsExec::ExecToLog '"$INSTDIR\post-install.cmd" -d -dev'
 	
 	WriteUninstaller $INSTDIR\uninst.exe
 SectionEnd

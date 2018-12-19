@@ -1,8 +1,9 @@
+@echo off
 rem
-rem @file api.cmd
+rem @file einfo.cmd
 rem @project cmd_fw
 rem @author Charles-Antoine Degennes (cadegenn@gmail.com)
-rem @date Monday September 10th 2018
+rem @date 2018.09.10
 rem @copyright (c) 2018 Charles-Antoine Degennes
 rem 
 rem @modified 
@@ -25,7 +26,10 @@ rem        along with Tiny %COMSPEC% Framework.  If not, see <http://www.gnu.org
 rem 
 rem
 
-set INDENT=_
-set PREPEND= *
-set TITLECHAR=*
-set LINEBREAKCHAR=-
+rem @brief  print an information message on the console
+rem @param	(string)	message without quotes
+set MESSAGE=%PREPEND% INF:%INDENT:_= %%*
+if NOT DEFINED QUIET echo %MESSAGE%
+if DEFINED LOGFILE call elog.cmd %MESSAGE%
+
+

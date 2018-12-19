@@ -74,7 +74,7 @@ call "%API_PATH%\api.cmd" :eexec reg load HKLM\%KEY%_SOFTWARE "%TARGET%\system32
 call "%API_PATH%\api.cmd" :eexec reg load HKLM\%KEY%_SYSTEM "%TARGET%\system32\config\SYSTEM"
 
 rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-rem détection du CurrentControlSet
+rem d‚tection du CurrentControlSet
 rem
 for /f "tokens=1,2*" %%a in ('reg query "HKLM\%KEY%_SYSTEM\Select" /v "Current"') do set OFFLINE_CONTROLSET=%%c
 rem call "%API_PATH%\api.cmd" :edebug OFFLINE_CONTROLSET = %OFFLINE_CONTROLSET%
@@ -84,7 +84,7 @@ set OFFLINE_CurrentControlSet=ControlSet00%OFFLINE_CONTROLSET%
 rem call "%API_PATH%\api.cmd" :edebug OFFLINE_CurrentControlSet = %OFFLINE_CurrentControlSet%
 
 rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-rem détection de l'architecture de l'OS
+rem d‚tection de l'architecture de l'OS
 rem
 set OFFLINE_ARCH=x86
 for /f "tokens=1,2*" %%a in ('reg query "HKLM\%KEY%_SYSTEM\%OFFLINE_CurrentControlSet%\Control\Session Manager\Environment" /v "PROCESSOR_ARCHITECTURE"') do set OFFLINE_PROCESSOR_ARCHITECTURE=%%c
@@ -92,12 +92,12 @@ call "%API_PATH%\api.cmd" :edebug OFFLINE_PROCESSOR_ARCHITECTURE = %OFFLINE_PROC
 if "%OFFLINE_PROCESSOR_ARCHITECTURE%" == "AMD64" set OFFLINE_ARCH=x64
 rem call "%API_PATH%\api.cmd" :edebug OFFLINE_ARCH = %OFFLINE_ARCH%
 
-rem détection de la phase d'installation de windows
+rem d‚tection de la phase d'installation de windows
 for /f "tokens=1,2*" %%a in ('reg query "HKLM\%KEY%_SOFTWARE\Microsoft\Windows\CurrentVersion\Setup\State" /v "ImageState"') do set OFFLINE_WindowsState=%%c
 rem call "%API_PATH%\api.cmd" :edebug OFFLINE_WindowsState = %OFFLINE_WindowsState%
 
 rem ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-rem Détection de la version de Windows
+rem D‚tection de la version de Windows
 rem
 for /f "tokens=1,2*" %%i in ('reg query "HKLM\%KEY%_SOFTWARE\Microsoft\Windows NT\CurrentVersion" ^| find "REG_SZ"') do set OFFLINE_Windows_%%i=%%k
 for /f "tokens=1,2*" %%i in ('reg query "HKLM\%KEY%_SOFTWARE\Microsoft\Windows NT\CurrentVersion" ^| find "REG_DWORD"') do set /a OFFLINE_Windows_%%i=%%k

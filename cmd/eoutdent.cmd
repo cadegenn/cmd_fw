@@ -1,8 +1,9 @@
+@echo off
 rem
-rem @file api.cmd
+rem @file eoutdent.cmd
 rem @project cmd_fw
 rem @author Charles-Antoine Degennes (cadegenn@gmail.com)
-rem @date Monday September 10th 2018
+rem @date 2018.09.10
 rem @copyright (c) 2018 Charles-Antoine Degennes
 rem 
 rem @modified 
@@ -25,7 +26,7 @@ rem        along with Tiny %COMSPEC% Framework.  If not, see <http://www.gnu.org
 rem 
 rem
 
-set INDENT=_
-set PREPEND= *
-set TITLECHAR=*
-set LINEBREAKCHAR=-
+rem @brief  outdent further messages
+set INDENT=%INDENT:~0,-2%
+rem make sur INDENT is at least filled with one underscore
+if not defined INDENT set INDENT=_
