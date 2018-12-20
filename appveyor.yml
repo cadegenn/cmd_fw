@@ -50,8 +50,6 @@ configuration:
 # scripts to run before build
 before_build:
   - cmd: echo Pass 03 - Before Build ----------------
-  # - pwsh: ./os.ps1 -d -dev -api .
-  # - pwsh: Get-ChildItem "env:"
 
 # scripts to run *after* solution is built and *before* automatic packaging occurs (web apps, NuGet packages, Azure Cloud Services)
 before_package:
