@@ -79,8 +79,7 @@ deploy:
   auth_token:
     secure: m+LSSJicczPadkIy5LORLVxh1eyK8Onyn0OyEDKKmXAZVlLNd/baAPeryXS/PID+
   artifact: to-publish
-  appveyor_repo_tag: true        # deploy on tag push only
-  skip_tags: true
+  # skip_tags: true
   provider: GitHub
   release: v%APPVEYOR_BUILD_VERSION%
   draft: false
@@ -88,4 +87,4 @@ deploy:
   force_update: true
   # tag: $(APPVEYOR_REPO_TAG_NAME)
   on:
-    branch: develop
+    appveyor_repo_tag: true        # deploy on tag push only
