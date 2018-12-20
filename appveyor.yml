@@ -81,10 +81,10 @@ deploy:
   artifact: to-publish
   skip_tags: true
   provider: GitHub
-  release: v%APPVEYOR_BUILD_VERSION%
+  release: v%APPVEYOR_REPO_TAG_NAME%
   draft: false
   prerelease: true
   force_update: true
   on:
     appveyor_repo_tag: true        # deploy on tag push only
-    tag: '%APPVEYOR_REPO_TAG_NAME%'
+    # tag: '%APPVEYOR_REPO_TAG_NAME%'
