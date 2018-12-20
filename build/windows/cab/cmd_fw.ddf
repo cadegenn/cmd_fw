@@ -30,7 +30,6 @@
 "cmd\eexec.cmd" 
 "cmd\eindent.cmd" 
 "cmd\edevel.cmd" 
-"cmd\regread.cmd.cmd" 
 "cmd\ewarn.cmd" 
 "cmd\edebug.cmd" 
 "cmd\eleave.cmd" 
