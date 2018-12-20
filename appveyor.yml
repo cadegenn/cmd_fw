@@ -81,9 +81,10 @@ deploy:
   artifact: to-publish
   appveyor_repo_tag: true        # deploy on tag push only
   provider: GitHub
-  release: v%APPVEYOR_BUILD_VERSION%  # DRAFT release
+  release: v%APPVEYOR_BUILD_VERSION%
   draft: false
   prerelease: true
   force_update: true
   on:
-    branch: master
+    tag: $(APPVEYOR_REPO_TAG_NAME)
+    # branch: master
