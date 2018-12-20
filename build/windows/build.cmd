@@ -176,10 +176,10 @@ call edevel MAKENSIS = %MAKENSIS%
 call ebegin Building EXE installer
 call eexec "%MAKENSIS%" /V%V% /INPUTCHARSET UTF8 /OUTPUTCHARSET UTF8 /DVERSION=%VERSION%.%BUILD% "%DIRNAME%\nsis\cmd_fw.nsi"
 call ebegin Building CAB cabinet
-call eexec %DIRNAME%\cab\make.cmd -api %CMDFW_PATH% -version %VERSION%.%BUILD%
+REM call eexec %DIRNAME%\cab\make.cmd -api %CMDFW_PATH% -version %VERSION%.%BUILD%
 REM call eexec makecab.exe /V%V% /D ROOT=%ROOT% /D VERSION=%VERSION%.%BUILD% /F "%DIRNAME%\cab\cmd_fw.ddf" /L "%ROOT%\releases"
-call eexec makecab.exe /V%V% /F "%DIRNAME%\cab\cmd_fw.ddf" /L "%ROOT%\releases"
-
+REM call eexec makecab.exe /V%V% /F "%DIRNAME%\cab\cmd_fw.ddf" /L "%ROOT%\releases"
+call eexec makecab.exe /V%V% /F "%ROOT%\build\windows\cab\cmd_fw.ddf" /D SourceDir=%ROOT% /D CabinetNameTemplate=cmdfw-%VERSION%.%BUILD%.cab /D DiskDirectoryTemplate=%ROOT%\releases
 echo %BUILD% > "%DIRNAME%\BUILD"
 
 rem ################################

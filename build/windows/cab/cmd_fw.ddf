@@ -1,0 +1,54 @@
+; @url https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/makecab
+; @url https://msdn.microsoft.com/en-us/library/bb417343.aspx#dir_file_syntax
+; @url https://ss64.com/nt/makecab.html
+; To use build a cabinet file, use the following syntaxe
+; makecab.exe /F %ProjectPath%\build\windows\cab\cmd_fw.ddf /D SourceDir=%ProjectPath% /D CabinetNameTemplate=cmdfw-%VERSION%.cab /D DiskDirectoryTemplate=%ProjectPath%\releases
+;.Set SourceDir=Z:\Development\cmd_fw
+;    CabinetNameTemplate is the name of the output CAB file:
+;.Set CabinetNameTemplate=cmdfw-2.0.0.2.CAB
+;.Set DiskDirectoryTemplate=Z:\Development\cmd_fw\releases
+.Set DiskLabelTemplate=cmdfw
+.Set Cabinet=on
+.Set Compress=on
+.Set UniqueFiles=off
+; list of files
+; --== bin ==--
+.Set DestinationDir=bin
+; --== cmd ==--
+.Set DestinationDir=cmd
+"cmd\everbose.cmd" 
+"cmd\einfo.cmd" 
+"cmd\ebegin.cmd" 
+"cmd\regread.cmd" 
+"cmd\elog.cmd" 
+"cmd\rempath.cmd" 
+"cmd\addpath.cmd" 
+"cmd\eerror.cmd" 
+"cmd\eoutdent.cmd" 
+"cmd\exec.cmd" 
+"cmd\eenter.cmd" 
+"cmd\eexec.cmd" 
+"cmd\eindent.cmd" 
+"cmd\edevel.cmd" 
+"cmd\regread.cmd.cmd" 
+"cmd\ewarn.cmd" 
+"cmd\edebug.cmd" 
+"cmd\eleave.cmd" 
+; --== includes ==--
+.Set DestinationDir=includes
+"includes\runtime.cmd" 
+; --== lib ==--
+.Set DestinationDir=lib
+"lib\api.cmd.bak" 
+"lib\windows_offline.cmd" 
+"lib\efunctions.cmd" 
+"lib\api.cmd" 
+; --== root ==--
+.Set DestinationDir=
+CHANGELOG.md
+demo.cmd
+install-cmdfw.cmd
+LICENSE
+post-install.cmd
+README.md
+skel.cmd
