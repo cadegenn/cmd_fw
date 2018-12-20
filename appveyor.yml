@@ -79,7 +79,7 @@ deploy:
   auth_token:
     secure: m+LSSJicczPadkIy5LORLVxh1eyK8Onyn0OyEDKKmXAZVlLNd/baAPeryXS/PID+
   artifact: to-publish
-  # skip_tags: true
+  skip_tags: true
   provider: GitHub
   release: v%APPVEYOR_BUILD_VERSION%
   draft: false
