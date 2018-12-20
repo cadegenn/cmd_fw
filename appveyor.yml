@@ -82,8 +82,8 @@ deploy:
   appveyor_repo_tag: true        # deploy on tag push only
   provider: GitHub
   release: v%APPVEYOR_BUILD_VERSION%  # DRAFT release
-  draft: true
+  draft: false
   prerelease: true
   force_update: true
   on:
-    branch: develop
+    branch: master
